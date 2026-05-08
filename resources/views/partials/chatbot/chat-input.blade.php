@@ -1,24 +1,93 @@
 {{-- resources/views/partials/chatbot/chat-input.blade.php --}}
-<div style="border-top:1px solid #f0f0f8; padding:16px 20px; display:flex; align-items:center; gap:10px; background:#fff;">
 
-    <input
-        type="text"
-        x-model="input"
-        @keydown.enter="send()"
-        :disabled="typing"
-        placeholder="Ceritakan minat atau hobimu..."
-        style="flex:1; padding:11px 16px; border-radius:14px; border:1.5px solid #e0e0f0; font-size:14px; font-family:'Inter',sans-serif; color:#1e1b4b; outline:none; transition:border-color 0.15s; background:#fafafa;"
-        onfocus="this.style.borderColor='#6366f1'; this.style.background='#fff'"
-        onblur="this.style.borderColor='#e0e0f0'; this.style.background='#fafafa'" />
+{{-- Locked state --}}
+<div x-show="locked" x-transition
+    class="px-5 py-5 flex flex-col items-center gap-3">
 
-    <button @click="send()"
-        :disabled="input.trim() === '' || typing"
-        :style="(input.trim() === '' || typing)
-            ? 'width:44px; height:44px; border-radius:14px; background:#e0e0f0; border:none; display:flex; align-items:center; justify-content:center; cursor:not-allowed;'
-            : 'width:44px; height:44px; border-radius:14px; background:#4f46e5; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 12px rgba(99,102,241,0.3); transition:background 0.15s, transform 0.1s;'"
-        onmouseover="if(!this.disabled) this.style.background='#4338ca'"
-        onmouseout="if(!this.disabled) this.style.background='#4f46e5'">
-        <x-icon name="send" color="#fff" size="18" />
-    </button>
+    <p class="text-[13px] text-gray-500 text-center">
+        Analisis selesai — rekomendasi jurusan lengkapmu siap dilihat
+    </p>
 
+    <x-button href="{{ route('results') }}" variant="primary">
+        <x-icon name="star" color="#fff" size="16" />
+        Lihat Hasil Rekomendasi
+    </x-button>
+</div>
+
+
+{{-- Active input --}}
+<div x-show="!locked" class="px-3 py-2">
+
+    <div style="
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    ">
+        <div style="
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            width: 100%;
+            max-width: 660px;
+        ">
+            {{-- Textarea multi-line --}}
+            <textarea
+                x-model="input"
+                @keydown.enter.prevent="if($event.shiftKey) { 
+                    input += '\n'; 
+                } else { 
+                    send(); 
+                }"
+                @input="autoResize($el)"
+                :disabled="typing || locked"
+                placeholder="Ceritakan minat atau hobimu..."
+                rows="1"
+                style="
+                    flex: 1;
+                    min-width: 0;
+                    padding: 12px 18px;
+                    font-size: 14px;
+                    border-radius: 14px;
+                    border: 1px solid #e0e0f0;
+                    background: #fafafa;
+                    color: #1e1b4b;
+                    outline: none;
+                    transition: all 0.15s ease;
+                    resize: none;
+                    font-family: inherit;
+                    line-height: 1.5;
+                    max-height: 120px;
+                    scrollbar-width: none;
+                    -ms-overflow-style: none;
+                "
+                onfocus="this.style.borderColor='#6366f1'; this.style.background='#ffffff'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)';"
+                onblur="this.style.borderColor='#e0e0f0'; this.style.background='#fafafa'; this.style.boxShadow='none';"></textarea>
+
+            {{-- Tombol send dengan spacing jelas --}}
+            <button
+                @click="send()"
+                :disabled="input.trim() === '' || typing"
+                style="
+                    flex-shrink: 0;
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 14px;
+                    border: none;
+                    transition: all 0.15s ease;
+                    disabled:background: #e0e0f0;
+                    disabled:cursor: not-allowed;
+                    background: #4f46e5;
+                    color: white;
+                    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+                "
+                onmouseover="if(!this.disabled){this.style.background='#4338ca'; this.style.transform='translateY(-1px)';}"
+                onmouseout="if(!this.disabled){this.style.background='#4f46e5'; this.style.transform='translateY(0)';}"
+                onmousedown="if(!this.disabled){this.style.transform='scale(0.95)';}">
+                <x-icon name="send" color="#fff" size="18" />
+            </button>
+        </div>
+    </div>
 </div>

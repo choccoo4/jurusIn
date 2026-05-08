@@ -3,14 +3,16 @@
 use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatbotController;
-
+use App\Http\Controllers\QuestionnaireController;
+use App\Http\Controllers\ResultsController;
 // Landing page
 Route::get('/', [LandingController::class, 'index'])->name('home');
 
-// chatbot
-Route::get('/mulai', [ChatbotController::class, 'index'])->name('quiz.start');
+// chatbot & kuesioner
+Route::get('/mulai',     [QuestionnaireController::class, 'index'])->name('quiz.start');
+Route::get('/chat',      [ChatbotController::class, 'index'])->name('quiz.chat');
+Route::get('/hasil',     [ResultsController::class, 'index'])->name('results');
 
-// Legal
 Route::get('/privasi',   fn() => view('pages.privacy'))->name('privacy');
 Route::get('/ketentuan', fn() => view('pages.terms'))->name('terms');
 

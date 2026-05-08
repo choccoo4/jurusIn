@@ -10,20 +10,20 @@
 
         <div x-data="faqAccordion()" style="background:#fff; border-radius:20px; border:1px solid #e0e0f0; overflow:hidden;">
             @foreach($faqs as $i => $faq)
-                <div style="border-bottom:{{ !$loop->last ? '1px solid #e8e8f0' : 'none' }};">
-                    <button @click="toggle({{ $i }})"
-                        style="width:100%; display:flex; justify-content:space-between; align-items:center; padding:20px 24px; background:transparent; border:none; cursor:pointer; text-align:left; gap:16px;">
-                        <span style="font-size:15px; font-weight:600; color:#1e1b4b;">{{ $faq['question'] }}</span>
-                        <div :style="`width:28px; height:28px; border-radius:50%; background:${isOpen({{ $i }}) ? '#4f46e5' : '#eef2ff'}; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background 0.2s, transform 0.2s; transform:${isOpen({{ $i }}) ? 'rotate(45deg)' : 'none'}`">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 5v14M5 12h14" :stroke="isOpen({{ $i }}) ? '#fff' : '#4f46e5'" stroke-width="2.5" stroke-linecap="round"/>
-                            </svg>
+            <div style="border-bottom:{{ !$loop->last ? '1px solid #e8e8f0' : 'none' }};">
+                <button @click="toggle({{ $i }})"
+                    style="width:100%; display:flex; justify-content:space-between; align-items:center; padding:20px 24px; background:transparent; border:none; cursor:pointer; text-align:left; gap:16px;">
+                    <span style="font-size:15px; font-weight:600; color:#1e1b4b;">{{ $faq['question'] }}</span>
+                    <div :style="`width:28px; height:28px; border-radius:50%; background:${isOpen({{ $i }}) ? '#4f46e5' : '#eef2ff'}; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background 0.2s, transform 0.2s; transform:${isOpen({{ $i }}) ? 'rotate(45deg)' : 'none'}`">
+                        <div :style="`color:${isOpen({{ $i }}) ? '#fff' : '#4f46e5'}; display:flex;`">
+                            <x-icon name="plus" color="currentColor" size="13" stroke="2.5" />
                         </div>
-                    </button>
-                    <div x-show="isOpen({{ $i }})" x-collapse style="padding:0 24px 20px;">
-                        <p style="font-size:14px; color:#6b7280; line-height:1.75; margin:0;">{{ $faq['answer'] }}</p>
                     </div>
+                </button>
+                <div x-show="isOpen({{ $i }})" x-collapse style="padding:0 24px 20px;">
+                    <p style="font-size:14px; color:#6b7280; line-height:1.75; margin:0;">{{ $faq['answer'] }}</p>
                 </div>
+            </div>
             @endforeach
         </div>
 

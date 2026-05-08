@@ -1,5 +1,5 @@
 {{-- resources/views/partials/chatbot/chat-section.blade.php --}}
-<section style="min-height:calc(100vh - 64px); background:#f5f4ff; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px;">
+<section style="min-height:calc(100vh - 64px); background:#f5f4ff; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:32px 20px;">
 
     <div style="width:100%; max-width:720px; display:flex; flex-direction:column; gap:16px;">
 
@@ -8,8 +8,7 @@
 
         {{-- Chat box --}}
         <div x-data="chatbot()"
-            x-init="init()"
-            style="background:#fff; border-radius:24px; border:1px solid #e0e0f0; overflow:hidden; display:flex; flex-direction:column; height:620px;">
+            style="background:#fff; border-radius:24px; border:1px solid #e0e0f0; overflow:hidden; display:flex; flex-direction:column; height:calc(100vh - 200px); min-height:500px;">
 
             {{-- Messages area --}}
             <div x-ref="messageArea"
@@ -33,21 +32,67 @@
 
             </div>
 
-            {{-- Suggestion chips --}}
+            {{-- Suggestion chips - Bungkus luar untuk masking --}}
             <div x-show="showSuggestions" x-transition
-                style="padding:0 24px 12px; display:flex; gap:8px; flex-wrap:wrap;">
-                <template x-for="chip in suggestions" :key="chip">
-                    <button @click="sendChip(chip)"
-                        style="font-size:12px; font-weight:500; padding:6px 14px; border-radius:99px; background:#eef2ff; color:#4f46e5; border:1px solid #c7d2fe; cursor:pointer; transition:background 0.15s, transform 0.1s;"
-                        onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='#eef2ff'"
-                        x-text="chip">
-                    </button>
-                </template>
+                style="
+                    position: relative;
+                    padding: 4px 0 12px 0;
+                ">
+
+                {{-- Gradient fade kanan --}}
+                <div style="
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    bottom: 0;
+                    width: 40px;
+                    background: linear-gradient(to right, transparent, #fff);
+                    z-index: 2;
+                    pointer-events: none;
+                "></div>
+
+                {{-- Scroll container --}}
+                <div style="
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    white-space: nowrap;
+                    -webkit-overflow-scrolling: touch;
+                    scrollbar-width: none;
+                    -ms-overflow-style: none;
+                    padding: 0 24px;
+                ">
+                    <div style="
+                        display: inline-flex;
+                        gap: 8px;
+                    ">
+                        <template x-for="chip in suggestions" :key="chip">
+                            <button @click="sendChip(chip)"
+                                style="
+                                    flex-shrink: 0;
+                                    font-size: 12px;
+                                    font-weight: 500;
+                                    padding: 8px 16px;
+                                    border-radius: 20px;
+                                    background: #eef2ff;
+                                    color: #4f46e5;
+                                    border: 1px solid #c7d2fe;
+                                    cursor: pointer;
+                                    transition: all 0.15s ease;
+                                    white-space: nowrap;
+                                "
+                                onmouseover="this.style.background='#ddd6fe'; this.style.transform='translateY(-1px)';"
+                                onmouseout="this.style.background='#eef2ff'; this.style.transform='translateY(0)';"
+                                x-text="chip">
+                            </button>
+                        </template>
+                    </div>
+                </div>
             </div>
 
             {{-- Input area --}}
-            @include('partials.chatbot.chat-input')
-
+            <div style="background:#fff; border-top:1px solid #f0f0f8; padding:8px 12px;">
+                @include('partials.chatbot.chat-input')
+            </div>
         </div>
 
     </div>

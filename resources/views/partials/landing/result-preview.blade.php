@@ -22,9 +22,9 @@
             <div>
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
                     <div :style="`width:32px; height:32px; border-radius:10px; background:${item.bg}; flex-shrink:0; display:flex; align-items:center; justify-content:center;`">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" :stroke="item.color" stroke-width="2" stroke-linecap="round">
-                            <path d="M4 6h16M4 10h16M4 14h8" />
-                        </svg>
+                        <div :style="`color:${item.color}; display:flex;`">
+                            <x-icon name="align-left" color="currentColor" size="15" stroke="2" />
+                        </div>
                     </div>
                     <div style="flex:1; min-width:0;">
                         <div style="display:flex; justify-content:space-between;">
