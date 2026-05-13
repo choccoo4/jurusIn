@@ -22,12 +22,7 @@ Alpine.data('heroCta',       heroCta)
 Alpine.data('resultPreview', resultPreview)
 Alpine.data('faqAccordion',  faqAccordion)
 Alpine.data('chatbot',       chatbot)
-Alpine.data('questionnaire', () => questionnaire([
-    { question: 'Apa aktivitas yang paling kamu nikmati?', options: ['Coding', 'Bisnis', 'Desain', 'Kesehatan'] },
-    { question: 'Apa nilai yang paling kamu hargai dalam bekerja?', options: ['Inovasi', 'Stabilitas', 'Kreativitas', 'Kontribusi Sosial'] },
-    { question: 'Bagaimana gaya belajar yang paling efektif untukmu?', options: ['Praktis', 'Teoritis', 'Visual', 'Kolaboratif'] },
-    { question: 'Apa tujuan karier jangka panjangmu?', options: ['Membangun Startup', 'Bekerja di Perusahaan Besar', 'Menjadi Freelancer', 'Kontribusi di Sektor Publik'] },
-])) 
+Alpine.data('questionnaire', questionnaire) 
 
 // Start Alpine
 Alpine.start()

@@ -13,62 +13,40 @@ class QuestionnaireController extends Controller
         ]);
     }
 
-    // -------------------------------------------------------------------------
-    // Move to a QuestionRepository or database when data grows
-    // -------------------------------------------------------------------------
-
     private function questions(): array
     {
         return [
             [
-                'question' => 'Kamu lebih tertarik pada aktivitas seperti apa?',
+                'question' => 'Saya suka memperbaiki atau merakit sesuatu.',
                 'icon'     => 'zap',
-                'options'  => [
-                    'Mengolah data dan logika',
-                    'Berinteraksi dengan orang',
-                    'Membuat karya kreatif',
-                    'Mengelola bisnis',
-                ],
             ],
             [
-                'question' => 'Pelajaran apa yang paling kamu sukai?',
+                'question' => 'Saya tertarik mempelajari cara kerja mesin atau alat elektronik.',
                 'icon'     => 'file-text',
-                'options'  => [
-                    'Matematika & Sains',
-                    'Bahasa & Komunikasi',
-                    'Seni & Desain',
-                    'Ekonomi & Bisnis',
-                ],
             ],
             [
-                'question' => 'Bagaimana cara kamu menyelesaikan masalah?',
+                'question' => 'Saya suka memecahkan masalah logika.',
                 'icon'     => 'layers',
-                'options'  => [
-                    'Analisis dan logika',
-                    'Diskusi dengan orang lain',
-                    'Pendekatan kreatif',
-                    'Strategi praktis',
-                ],
             ],
             [
-                'question' => 'Lingkungan kerja seperti apa yang kamu inginkan?',
+                'question' => 'Saya menikmati menganalisis suatu persoalan secara mendalam.',
                 'icon'     => 'star',
-                'options'  => [
-                    'Teknis dan sistematis',
-                    'Kolaboratif dan sosial',
-                    'Fleksibel dan kreatif',
-                    'Kompetitif dan dinamis',
-                ],
             ],
             [
-                'question' => 'Kamu lebih suka output pekerjaan berupa apa?',
+                'question' => 'Saya suka membuat desain atau karya visual.',
                 'icon'     => 'check-circle',
-                'options'  => [
-                    'Produk digital / software',
-                    'Dampak sosial nyata',
-                    'Karya seni / desain',
-                    'Pertumbuhan bisnis',
-                ],
+            ],
+            [
+                'question' => 'Saya tertarik dengan dunia bisnis dan kewirausahaan.',
+                'icon'     => 'zap',
+            ],
+            [
+                'question' => 'Saya suka berinteraksi dan membantu orang lain.',
+                'icon'     => 'file-text',
+            ],
+            [
+                'question' => 'Saya lebih suka bekerja dengan data dan angka.',
+                'icon'     => 'layers',
             ],
         ];
     }

@@ -107,24 +107,27 @@ html {
     background: rgba(255, 255, 255, 0.15);
 }
 
-.opt {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 13px 16px;
+.opt-pill {
+    width: auto !important;
+    /* Override .opt width: 100% */
+    flex-shrink: 0;
+    padding: 10px 20px;
     border-radius: 999px;
-    border: 1.5px solid #e5e7eb;
+    border: 2px solid #e5e7eb;
     background: #ffffff;
     cursor: pointer;
-    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-    text-align: left;
-    font-family: 'Inter', sans-serif;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 18px;
+    font-weight: 700;
+    color: #6b7280;
+    line-height: 1;
 }
 
-.opt:hover {
+.opt-pill:hover {
     border-color: #c4b5fd;
     background: #faf9ff;
+    color: #4f46e5;
+    transform: scale(1.05);
 }
 
 .opt-badge {

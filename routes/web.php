@@ -9,7 +9,7 @@ use App\Http\Controllers\ResultsController;
 Route::get('/', [LandingController::class, 'index'])->name('home');
 
 // chatbot & kuesioner
-Route::get('/mulai',     [QuestionnaireController::class, 'index'])->name('quiz.start');
+Route::get('/mulai',     [QuestionnaireController::class, 'index'])->name('questionnaire');
 Route::get('/chat',      [ChatbotController::class, 'index'])->name('quiz.chat');
 Route::get('/hasil',     [ResultsController::class, 'index'])->name('results');
 

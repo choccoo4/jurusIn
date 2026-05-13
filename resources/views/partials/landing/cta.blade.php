@@ -14,7 +14,7 @@
         </p>
 
         <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-            <x-button href="{{ route('quiz.start') }}" variant="white">
+            <x-button href="{{ route('questionnaire') }}" variant="white">
                 <x-icon name="zap" color="#4f46e5" size="16" />
                 Mulai Tes Sekarang
             </x-button>

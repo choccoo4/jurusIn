@@ -31,7 +31,7 @@
                 <p style="font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#6366f1; margin:0 0 16px;">Navigasi</p>
                 <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px;">
                     <li><a href="{{ route('home') }}" class="footer-link">Beranda</a></li>
-                    <li><a href="{{ route('quiz.start') }}" class="footer-link">Mulai Tes</a></li>
+                    <li><a href="{{ route('questionnaire') }}" class="footer-link">Mulai Tes</a></li>
                     <li><a href="#cara-kerja" class="footer-link">Cara Kerja</a></li>
                     <li><a href="#faq" class="footer-link">FAQ</a></li>
                 </ul>

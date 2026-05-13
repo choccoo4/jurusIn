@@ -4,8 +4,17 @@ export function questionnaire(questions) {
     return {
         questions,
         currentIndex: 0,
-        answers: {},
+        answers: {},        // { 0: 4, 1: 5, 2: 3, ... }
         done: false,
+
+        // Skala Likert
+        scale: [
+            { value: 1},
+            { value: 2},
+            { value: 3},
+            { value: 4},
+            { value: 5},
+        ],
 
         get currentQuestion() {
             return this.questions[this.currentIndex]
@@ -19,30 +28,49 @@ export function questionnaire(questions) {
             return this.currentIndex === this.questions.length - 1
         },
 
-        selectOption(option) {
-            this.answers[this.currentIndex] = option
+        get isFirst() {
+            return this.currentIndex === 0
+        },
+
+        // Cek apakah jawaban sudah dipilih
+        get hasAnswer() {
+            return this.answers[this.currentIndex] !== undefined
+        },
+
+        // Pilih skala
+        selectOption(value) {
+            this.answers[this.currentIndex] = value
+        },
+
+        // Dapatkan label dari value
+        getLabel(value) {
+            const scale = this.scale.find(s => s.value === value)
+            return scale ? scale.label : ''
         },
 
         nextStep() {
-            if (!this.answers[this.currentIndex]) return
+            if (!this.hasAnswer) return
             if (!this.isLast) this.currentIndex++
         },
 
         prevStep() {
-            if (this.currentIndex > 0) this.currentIndex--
+            if (!this.isFirst) this.currentIndex--
         },
 
         submit() {
-            if (!this.answers[this.currentIndex]) return
+            if (!this.hasAnswer) return
 
-            // Store answers in sessionStorage so chatbot can read them
+            // Format jawaban dengan label
+            const formattedAnswers = this.questions.map((q, i) => ({
+                question: q.question,
+                answer: this.answers[i] ?? null,
+                label: this.answers[i] ? this.getLabel(this.answers[i]) : null,
+                value: this.answers[i] ?? null,
+            }))
+
+            // Store answers in sessionStorage
             sessionStorage.setItem('quiz_answers', JSON.stringify(this.answers))
-            sessionStorage.setItem('quiz_questions', JSON.stringify(
-                this.questions.map((q, i) => ({
-                    question: q.question,
-                    answer: this.answers[i] ?? null,
-                }))
-            ))
+            sessionStorage.setItem('quiz_questions', JSON.stringify(formattedAnswers))
 
             this.done = true
         },

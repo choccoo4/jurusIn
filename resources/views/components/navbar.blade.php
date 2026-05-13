@@ -26,7 +26,7 @@
                onmouseover="this.style.color='#4f46e5'" onmouseout="this.style.color='#6b7280'">
                 FAQ
             </a>
-            <x-button href="{{ route('quiz.start') }}" variant="primary" size="sm" :icon="true">
+            <x-button href="{{ route('questionnaire') }}" variant="primary" size="sm" :icon="true">
                 <x-icon name="chevron-right" color="#fff" size="15" />
                 Mulai Tes
             </x-button>

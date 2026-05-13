@@ -8,7 +8,7 @@
 
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
 
-        <x-button href="{{ route('quiz.start') }}" variant="outline" size="sm">
+        <x-button href="{{ route('questionnaire') }}" variant="outline" size="sm">
             <x-icon name="refresh" color="#4f46e5" size="15" />
             Ulangi Tes
         </x-button>

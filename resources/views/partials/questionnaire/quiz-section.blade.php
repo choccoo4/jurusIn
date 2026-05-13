@@ -8,7 +8,7 @@
 
         {{-- Quiz card --}}
         <div
-            x-data="questionnaire({{ json_encode($questions) }})"
+            x-data="questionnaire({{ Js::from($questions) }})"
             style="background:#fff; border-radius:24px; border:1px solid #e0e0f0; overflow:hidden;">
 
             {{-- Progress bar --}}
