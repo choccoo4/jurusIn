@@ -6,27 +6,32 @@ export function resultPreview() {
 
         items: [
             {
+                rank: 1,
                 label: 'Teknik Informatika',
-                pct: 92,
+                description: 'Logika, coding, problem solving',
                 color: '#4f46e5',
                 bg: '#eef2ff',
+                tags: ['Logika', 'Coding', 'Problem Solving'],
             },
             {
+                rank: 2,
                 label: 'Sistem Informasi',
-                pct: 87,
+                description: 'Bisnis & teknologi',
                 color: '#7c3aed',
                 bg: '#f5f3ff',
+                tags: ['Bisnis', 'Teknologi', 'Manajemen'],
             },
             {
+                rank: 3,
                 label: 'Data Science',
-                pct: 85,
+                description: 'Data, statistik, AI',
                 color: '#6366f1',
                 bg: '#eef2ff',
+                tags: ['Statistik', 'AI', 'Analisis'],
             },
         ],
 
         animate() {
-            // Delay sedikit supaya DOM sudah settle dulu baru width di-set
             this.$nextTick(() => {
                 this.visible = true
             })

@@ -7,52 +7,83 @@ export function chatbot() {
         typing: false,
         showSuggestions: true,
         locked: false,
+        _locking: false,
         turnCount: 0,
-        maxTurns: 4,            // Maksimal 4 bot replies sebelum lock
         collectedInfo: {
-            interest: null,     // Minat utama
-            workStyle: null,    // Tim atau sendiri
-            learningStyle: null,// Teori atau praktik
-            personality: null,  // Santai atau serius
+            interest: null,
         },
-        currentQuestion: 0,     // Track pertanyaan ke berapa
+        currentQuestion: 0,
 
         suggestions: [
-            'Saya suka coding dan teknologi',
-            'Saya tertarik bisnis dan keuangan',
-            'Saya suka desain dan seni',
-            'Saya suka kesehatan dan sains',
+            'Membuat atau merakit sesuatu',
+            'Menganalisis masalah & cari solusi',
+            'Mendesain atau berkreasi visual',
+            'Diskusi & bantu orang lain',
+            'Memimpin atau mengatur tim',
+            'Mengatur & merapikan sistem',
         ],
 
         // ========== PERTANYAAN BOT ==========
         questions: [
             {
-                id: 'interest',
-                text: 'Hal apa yang paling menarik buat kamu?',
-                followUp: 'Coba ceritakan lebih spesifik, misalnya: apakah kamu lebih suka kegiatan kreatif seperti menggambar, atau kegiatan teknis seperti coding?',
+                id: 'flowState',
+                text: 'Aktivitas seperti apa yang membuat kamu merasa sangat menikmati prosesnya sampai lupa waktu?',
+                followUp: 'Coba ceritakan lebih detail — apakah aktivitas itu lebih ke membuat sesuatu, menganalisis, membantu orang, atau mengatur sesuatu?',
                 keywords: {
-                    tech: ['coding', 'teknologi', 'komputer', 'programming', 'it', 'software'],
-                    creative: ['desain', 'seni', 'gambar', 'kreatif', 'visual', 'fotografi'],
-                    business: ['bisnis', 'keuangan', 'marketing', 'jualan', 'wirausaha'],
-                    health: ['kesehatan', 'dokter', 'medis', 'biologi', 'sains'],
+                    making: ['membuat', 'merakit', 'bangun', 'konstruksi', 'perbaiki', 'tangan'],
+                    analyzing: ['analisis', 'meneliti', 'pahami', 'logika', 'data', 'problem', 'matematika'],
+                    creating: ['desain', 'gambar', 'tulis', 'musik', 'seni', 'kreatif', 'visual', 'edit'],
+                    helping: ['bantu', 'ajar', 'dengar', 'konsultasi', 'orang', 'komunitas', 'sosial'],
+                    leading: ['pimpin', 'organisir', 'presentasi', 'jual', 'nego', 'bicara', 'strategi'],
+                    organizing: ['atur', 'jadwal', 'arsip', 'data', 'hitung', 'catat', 'dokumen', 'rapi'],
                 },
             },
             {
-                id: 'workStyle',
-                text: 'Kamu lebih suka bekerja sendiri atau dalam tim?',
-                followUp: 'Maksudku, apakah kamu merasa lebih produktif saat sendiri atau justru lebih bersemangat saat diskusi dengan orang lain?',
+                id: 'problemStyle',
+                text: 'Saat menghadapi suatu masalah, kamu biasanya lebih suka mencoba langsung, menganalisis dulu, berdiskusi dengan orang lain, atau mencari cara lain? Ceritakan sedikit.',
+                followUp: 'Apakah pendekatan itu berubah tergantung jenis masalahnya, atau kamu memang selalu nyaman dengan cara itu?',
                 keywords: {
-                    solo: ['sendiri', 'solo', 'mandiri', 'individu', 'fokus sendiri'],
-                    team: ['tim', 'bareng', 'bersama', 'kolaborasi', 'diskusi', 'orang lain'],
+                    doing: ['langsung', 'coba', 'praktek', 'tangan', 'aksi', 'eksekusi'],
+                    thinking: ['analisis', 'pikir', 'riset', 'data', 'logika', 'sendiri', 'dalam'],
+                    talking: ['diskusi', 'tanya', 'bicara', 'tim', 'teman', 'pendapat', 'kolaborasi'],
+                    adapting: ['gabung', 'kombinasi', 'fleksibel', 'tergantung', 'campur', 'semua'],
                 },
             },
             {
-                id: 'learningStyle',
-                text: 'Kamu lebih suka belajar dari teori dulu atau langsung praktik?',
-                followUp: 'Contohnya, apakah kamu tipe yang baca buku/manual dulu sebelum mencoba, atau justru langsung coba-coba dan belajar dari pengalaman?',
+                id: 'environment',
+                text: 'Lingkungan belajar atau kerja seperti apa yang membuat kamu merasa nyaman dan produktif?',
+                followUp: 'Apakah kamu lebih suka suasana yang tenang dan teratur, atau justru yang dinamis dan banyak interaksi?',
                 keywords: {
-                    theory: ['teori', 'baca', 'belajar dulu', 'pahami', 'konsep', 'buku'],
-                    practice: ['praktik', 'langsung', 'coba', 'praktek', 'hands-on', 'pengalaman'],
+                    structured: ['teratur', 'rapi', 'tenang', 'jadwal', 'prosedur', 'jelas', 'stabil'],
+                    flexible: ['bebas', 'fleksibel', 'kreatif', 'dinamis', 'santai', 'tidak kaku'],
+                    social: ['interaksi', 'ramai', 'diskusi', 'kolaborasi', 'orang', 'tim'],
+                    independent: ['sendiri', 'fokus', 'privat', 'konsentrasi', 'sunyi'],
+                },
+            },
+            {
+                id: 'enjoyment',
+                text: 'Ketika mengerjakan sesuatu, bagian mana yang paling kamu nikmati: membuat, menganalisis, membantu, memimpin, mengatur, atau hal lainnya? Jelaskan alasannya.',
+                followUp: 'Dari semua itu, mana yang bikin kamu merasa paling "hidup" atau bersemangat?',
+                keywords: {
+                    making: ['membuat', 'cipta', 'bangun', 'konstruksi', 'produk', 'nyata', 'fisik'],
+                    analyzing: ['analisis', 'teliti', 'data', 'logika', 'riset', 'solusi', 'pikir'],
+                    creating: ['kreatif', 'desain', 'seni', 'estetika', 'imajinasi', 'ekspresi'],
+                    helping: ['bantu', 'ajar', 'dengar', 'dukung', 'komunitas', 'peduli', 'sosial'],
+                    leading: ['pimpin', 'pengaruh', 'nego', 'strategi', 'bicara', 'motivasi'],
+                    organizing: ['atur', 'sistem', 'jadwal', 'arsip', 'detail', 'rapi', 'catat'],
+                },
+            },
+            {
+                id: 'skillRelied',
+                text: 'Menurutmu, kemampuan atau cara kerja apa yang paling sering kamu andalkan saat menyelesaikan sesuatu?',
+                followUp: 'Apakah kemampuan itu kamu dapat dari bakat alami, hasil belajar, atau pengalaman?',
+                keywords: {
+                    technical: ['teknis', 'alat', 'tangan', 'mesin', 'bangun', 'perbaiki'],
+                    analytical: ['analisis', 'logika', 'data', 'riset', 'solusi', 'metode'],
+                    creative: ['kreatif', 'ide', 'desain', 'imajinasi', 'inovatif', 'unik'],
+                    interpersonal: ['komunikasi', 'empati', 'negosiasi', 'tim', 'hubungan', 'orang'],
+                    leadership: ['pimpin', 'strategi', 'keputusan', 'arahkan', 'motivasi'],
+                    detail: ['teliti', 'rapi', 'atur', 'cek', 'verifikasi', 'akurat'],
                 },
             },
         ],
@@ -70,35 +101,35 @@ export function chatbot() {
                 text: 'Berdasarkan minatmu di bidang teknologi, berikut jurusan yang paling cocok untukmu:',
                 results: [
                     { major: 'Teknik Informatika', pct: 94 },
-                    { major: 'Sistem Informasi', pct: 88},
-                    { major: 'Data Science', pct: 85},
+                    { major: 'Sistem Informasi', pct: 88 },
+                    { major: 'Data Science', pct: 85 },
                 ],
             },
             {
                 keywords: ['bisnis', 'keuangan', 'ekonomi', 'manajemen', 'marketing', 'wirausaha', 'entrepreneur'],
                 text: 'Minatmu di bidang bisnis sangat bagus! Ini rekomendasi jurusan untukmu:',
                 results: [
-                    { major: 'Manajemen Bisnis', pct: 92},
-                    { major: 'Bisnis Digital', pct: 87},
-                    { major: 'Akuntansi', pct: 80},
+                    { major: 'Manajemen Bisnis', pct: 92 },
+                    { major: 'Bisnis Digital', pct: 87 },
+                    { major: 'Akuntansi', pct: 80 },
                 ],
             },
             {
                 keywords: ['desain', 'seni', 'kreatif', 'gambar', 'visual', 'estetika', 'fotografi', 'ui', 'ux'],
                 text: 'Jiwa kreatifmu cocok dengan jurusan-jurusan berikut:',
                 results: [
-                    { major: 'Desain Komunikasi Visual', pct: 93},
-                    { major: 'Desain Interior', pct: 85},
-                    { major: 'UI/UX Design', pct: 88,}
+                    { major: 'Desain Komunikasi Visual', pct: 93 },
+                    { major: 'Desain Interior', pct: 85 },
+                    { major: 'UI/UX Design', pct: 88, }
                 ],
             },
             {
                 keywords: ['kesehatan', 'dokter', 'medis', 'farmasi', 'biologi', 'sains', 'kedokteran', 'perawat'],
                 text: 'Passion di bidang kesehatan membuka banyak peluang. Ini rekomendasinya:',
                 results: [
-                    { major: 'Kedokteran', pct: 90},
-                    { major: 'Farmasi', pct: 85},
-                    { major: 'Ilmu Keperawatan', pct: 80}
+                    { major: 'Kedokteran', pct: 90 },
+                    { major: 'Farmasi', pct: 85 },
+                    { major: 'Ilmu Keperawatan', pct: 80 }
                 ],
             },
         ],
@@ -108,24 +139,31 @@ export function chatbot() {
             const quizData = raw ? JSON.parse(raw) : null
 
             if (quizData) {
-                const summary = quizData
-                    .filter(q => q.answer)
-                    .map(q => `• ${q.question}: **${q.answer}**`)
-                    .join('\n')
-
+                this.startedFromQuiz = true
                 this.pushBot(
-                    `Halo! Aku JurusIn AI. Aku sudah membaca jawaban kuesionermu. Berdasarkan pilihanmu, sepertinya kamu punya profil yang menarik! Ceritakan lebih lanjut tentang minat atau aktivitas yang paling kamu suka.`,
+                    `Halo! Terima kasih sudah mengisi kuesioner. Aku sudah menganalisis jawabanmu dan punya gambaran awal tentang preferensimu. Sekarang aku mau kenal lebih dekat ya.`,
                     null,
                     false
                 )
+                setTimeout(() => {
+                    if (!this.locked) {
+                        this.currentQuestion = 0
+                        this.pushBot(this.questions[0].text)
+                    }
+                }, 1000)
             } else {
-                // Mulai dengan pertanyaan pertama
+                this.startedFromQuiz = false
                 this.pushBot(
-                    'Halo! Aku JurusIn AI. Aku akan bantu kamu menemukan jurusan yang paling cocok. Yuk, kita mulai! ' + this.questions[0].text,
+                    'Halo! Aku JurusIn AI — asisten pencari jurusan. Aku akan menanyakan beberapa hal untuk menemukan jurusan yang paling cocok untukmu.',
                     null,
                     false
                 )
-                this.currentQuestion = 0
+                setTimeout(() => {
+                    if (!this.locked) {
+                        this.currentQuestion = 0
+                        this.pushBot(this.questions[0].text)
+                    }
+                }, 1000)
             }
         },
 
@@ -141,6 +179,8 @@ export function chatbot() {
         },
 
         pushBot(text, results = null, withTyping = true) {
+            if (this.locked) return
+
             if (withTyping) {
                 this.typing = true
                 const delay = 700 + Math.random() * 400
@@ -149,11 +189,7 @@ export function chatbot() {
                     this.messages.push({ sender: 'bot', text, results, time: this.now() })
                     this.$nextTick(() => this.scrollToBottom())
                     this.turnCount++
-
-                    // Cek apakah sudah waktunya lock
-                    if (this.turnCount >= this.maxTurns) {
-                        setTimeout(() => this.lockConversation(), 1500)
-                    }
+                    // nyoba hapus pengecekan maxTurns biar nggak lock prematur
                 }, delay)
             } else {
                 this.messages.push({ sender: 'bot', text, results, time: this.now() })
@@ -183,46 +219,66 @@ export function chatbot() {
         },
 
         sendChip(chip) {
-            this.input = chip
-            this.send()
+            if (!this.typing && !this.locked) {
+                this.messages.push({ sender: 'user', text: chip, results: null, time: this.now() })
+                this.input = ''
+                this.showSuggestions = false
+
+                // Reset textarea
+                const textarea = this.$el.querySelector('textarea');
+                if (textarea) {
+                    textarea.style.height = 'auto';
+                }
+
+                this.$nextTick(() => {
+                    this.scrollToBottom();
+                });
+
+                // Process chip text
+                this.processInput(chip)
+            }
         },
 
         // ========== PROCESS INPUT DENGAN AMBIGUITY HANDLING ==========
         processInput(text) {
             const lower = text.toLowerCase()
 
-            // 1. Cek apakah jawaban ambigu
+            // 1. Cek ambigu
             if (this.isAmbiguous(lower)) {
                 this.handleAmbiguity()
                 return
             }
 
-            // 2. Cek apakah user mention interest langsung
+            // 2. Cek interest dari knowledgeBase
             for (const entry of this.knowledgeBase) {
                 if (entry.keywords.some(kw => lower.includes(kw))) {
-                    // Dapet interest! Simpan & kasih hasil
                     this.collectedInfo.interest = entry.text
 
-                    // Kalau udah cukup info (minimal 2-3 data), langsung kasih hasil
-                    if (this.turnCount >= 2) {
-                        this.pushBot(entry.text, entry.results)
+                    if (this.turnCount < 2) {
+                        // Masih awal → simpan interest, lanjut tanya
+                        this.pushBot(
+                            `Wah, bidang ${this.getInterestLabel(entry.keywords[0])} terdengar menarik! Aku mau kenal lebih jauh dulu ya.`
+                        )
                         setTimeout(() => {
-                            this.lockConversation()
-                        }, 2500)
-                    } else {
-                        // Kasih hasil + lanjut tanya
-                        this.pushBot(entry.text, entry.results)
-                        setTimeout(() => {
-                            if (this.turnCount < this.maxTurns && this.collectedInfo.workStyle === null) {
+                            if (!this.locked) {
                                 this.askNextQuestion()
                             }
-                        }, 2500)
+                        }, 1500)
+                        return
                     }
+
+                    // Udah cukup interaksi → kasih rekomendasi
+                    this.pushBot(entry.text, entry.results)
+                    setTimeout(() => {
+                        if (!this.locked) {
+                            this.askNextQuestion()
+                        }
+                    }, 2500)
                     return
                 }
             }
 
-            // 3. Kalau nggak matching, tanya pertanyaan berikutnya
+            // 3. Nggak match → lanjut pertanyaan berikutnya
             this.askNextQuestion()
         },
 
@@ -241,6 +297,7 @@ export function chatbot() {
 
             const randomFollowUp = followUpOptions[Math.floor(Math.random() * followUpOptions.length)]
             this.pushBot(randomFollowUp)
+            // Jangan askNextQuestion() dulu, biar user jawab dulu
         },
 
         // ========== TANYA PERTANYAAN BERIKUTNYA ==========
@@ -250,27 +307,58 @@ export function chatbot() {
                 const nextQ = this.questions[this.currentQuestion]
                 this.pushBot(nextQ.text)
             } else {
-                // Udah tanya semua, kasih hasil
+                // Semua pertanyaan udah ditanyain lanjut berikan final recommendation
                 this.giveFinalRecommendation()
             }
         },
 
         // ========== REKOMENDASI FINAL ==========
         giveFinalRecommendation() {
-            // Cari match terbaik dari knowledgeBase
-            // Buat dummy, ambil yang pertama aja
-            const recommendation = this.knowledgeBase[0]
+            let majors = []
+
+            // 1. Cari jurusan yang match sama interest user
+            if (this.collectedInfo.interest) {
+                for (const entry of this.knowledgeBase) {
+                    if (entry.text === this.collectedInfo.interest) {
+                        majors = entry.results.map(r => r.major)
+                        break
+                    }
+                }
+            }
+
+            // 2. Kalau nggak ada yang match, ambil dari semua knowledgeBase
+            if (majors.length === 0) {
+                for (const entry of this.knowledgeBase) {
+                    for (const r of entry.results) {
+                        if (!majors.includes(r.major)) {
+                            majors.push(r.major)
+                        }
+                    }
+                }
+            }
+
+            // 3. Ambil 3 aja buat teaser, jadi ga langsung spill hasil di chatbot
+            const teaserMajors = majors.slice(0, 3)
+
             this.pushBot(
-                'Dari obrolan kita, aku udah cukup kenal sama kamu! Ini rekomendasi yang paling cocok:',
-                recommendation.results
+                `Dari obrolan kita, aku udah cukup kenal sama kamu! Sepertinya jurusan seperti **${teaserMajors.join('**, **')}** cocok buat kamu. Tapi ada analisis lengkapnya lho — lengkap dengan tingkat kecocokan & alasannya!`,
+                null
             )
             setTimeout(() => this.lockConversation(), 2000)
         },
 
         // ========== LOCK & TAMPILKAN BUTTON ==========
         lockConversation() {
+            if (this._locking) return
+            this._locking = true
             this.locked = true
             this.showSuggestions = false
+
+            // SIMPAN DATA CHATBOT KE SESSION STORAGE
+            sessionStorage.setItem('chat_messages', JSON.stringify(this.messages))
+            sessionStorage.setItem('chat_interest', this.collectedInfo.interest || '')
+            sessionStorage.setItem('chat_turnCount', this.turnCount)
+
             this.pushBot(
                 '🎉 Aku sudah punya cukup gambaran tentang profilmu! Klik tombol di bawah untuk melihat hasil rekomendasi lengkap & detail jurusan yang paling cocok untukmu.',
                 null,
@@ -282,6 +370,20 @@ export function chatbot() {
         scrollToBottom() {
             const area = this.$refs.messageArea
             if (area) area.scrollTop = area.scrollHeight
+        },
+
+        getInterestLabel(keyword) {
+            const labels = {
+                'coding': 'teknologi',
+                'teknologi': 'teknologi',
+                'bisnis': 'bisnis & keuangan',
+                'keuangan': 'bisnis & keuangan',
+                'desain': 'desain & seni',
+                'seni': 'desain & seni',
+                'kesehatan': 'kesehatan & sains',
+                'dokter': 'kesehatan & sains',
+            }
+            return labels[keyword] || 'ini'
         },
     }
 }

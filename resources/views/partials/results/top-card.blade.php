@@ -7,30 +7,16 @@
 
     <div style="position:relative; z-index:1;">
 
-        {{-- Label --}}
-        <x-tag icon="star" bg="rgba(255,255,255,0.15)" color="#fff" style="margin-bottom:20px;">
-            #1 Rekomendasi Terbaik
-        </x-tag>
-
-        {{-- Score ring + name --}}
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:20px;">
-
-            <div>
-                <h2 style="font-size:28px; font-weight:700; color:#fff; margin:0 0 8px; letter-spacing:-0.5px;" x-text="top.name"></h2>
-                <p style="font-size:14px; color:#c7d2fe; line-height:1.7; margin:0; max-width:420px;" x-text="top.description"></p>
-            </div>
-
-            {{-- Score circle --}}
-            <div style="flex-shrink:0; width:80px; height:80px; border-radius:50%; border:3px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.1); display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                <span style="font-size:22px; font-weight:700; color:#fff; line-height:1;" x-text="top.score + '%'"></span>
-                <span style="font-size:10px; color:#c7d2fe; margin-top:2px;">cocok</span>
-            </div>
-
+        {{-- Rank badge --}}
+        <div style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:99px; background:rgba(255,255,255,0.15); margin-bottom:20px;">
+            <x-icon name="star" color="#fbbf24" size="14" />
+            <span style="font-size:12px; font-weight:600; color:#fff;">#<span x-text="top.rank"></span> Rekomendasi Terbaik</span>
         </div>
 
-        {{-- Bar --}}
-        <div style="height:8px; background:rgba(255,255,255,0.15); border-radius:99px; overflow:hidden;">
-            <div :style="`height:100%; border-radius:99px; background:#fff; width:${top.score}%; animation:growBar 1.4s cubic-bezier(0.4,0,0.2,1) both;`"></div>
+        {{-- Major name + description --}}
+        <div style="margin-bottom:20px;">
+            <h2 style="font-size:28px; font-weight:700; color:#fff; margin:0 0 8px; letter-spacing:-0.5px;" x-text="top.major"></h2>
+            <p style="font-size:14px; color:#c7d2fe; line-height:1.7; margin:0; max-width:480px;" x-text="top.description"></p>
         </div>
 
         {{-- Meta tags --}}

@@ -10,33 +10,39 @@
     {{-- Card header --}}
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <div>
-            <p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:#9ca3af; margin:0 0 4px;">Hasil analisis kamu</p>
+            <p style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:#9ca3af; margin:0 0 4px;">Contoh Hasil Analisis</p>
             <p style="font-size:16px; font-weight:600; color:#1e1b4b; margin:0;">Top rekomendasi jurusan</p>
         </div>
-        <x-tag icon="check-circle" bg="#dcfce7" color="#166534">Selesai</x-tag>
+        <x-tag icon="check-circle" bg="#dcfce7" color="#166534">Contoh</x-tag>
     </div>
 
-    {{-- Bar items --}}
-    <div style="display:flex; flex-direction:column; gap:16px;">
+    {{-- Rank items --}}
+    <div style="display:flex; flex-direction:column; gap:12px;">
         <template x-for="(item, i) in items" :key="i">
-            <div>
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                    <div :style="`width:32px; height:32px; border-radius:10px; background:${item.bg}; flex-shrink:0; display:flex; align-items:center; justify-content:center;`">
-                        <div :style="`color:${item.color}; display:flex;`">
-                            <x-icon name="align-left" color="currentColor" size="15" stroke="2" />
-                        </div>
-                    </div>
-                    <div style="flex:1; min-width:0;">
-                        <div style="display:flex; justify-content:space-between;">
-                            <span style="font-size:14px; font-weight:600;" x-text="item.label"></span>
-                            <span style="font-size:14px; font-weight:600;" :style="`color:${item.color}`" x-text="item.pct + '%'"></span>
-                        </div>
-                        <p style="font-size:11px; color:#9ca3af; margin:2px 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" x-text="item.sub"></p>
-                    </div>
+            <div style="display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:14px; background:#fafbff; border:1px solid #f0f0f8; transition:all 0.2s ease;"
+                onmouseover="this.style.borderColor='#c7d2fe'; this.style.boxShadow='0 2px 8px rgba(79,70,229,0.06)';"
+                onmouseout="this.style.borderColor='#f0f0f8'; this.style.boxShadow='none';">
+
+                {{-- Rank badge --}}
+                <div :style="`width:36px; height:36px; border-radius:10px; background:${item.bg}; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:${item.color};`"
+                    x-text="'#' + item.rank">
                 </div>
-                <div style="height:7px; background:#f0f0f8; border-radius:99px; overflow:hidden;">
-                    <div :style="`height:100%; border-radius:99px; background:${item.color}; width:${item.pct}%; animation:growBar 1.2s cubic-bezier(0.4,0,0.2,1) both; animation-delay:${i * 0.15}s`"></div>
+
+                {{-- Info --}}
+                <div style="flex:1; min-width:0;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:14px; font-weight:600; color:#1e1b4b;" x-text="item.label"></span>
+                    </div>
+                    <p style="font-size:11px; color:#9ca3af; margin:2px 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" x-text="item.description"></p>
                 </div>
+
+                {{-- Tags --}}
+                <div style="display:flex; gap:4px; flex-shrink:0;">
+                    <template x-for="tag in (item.tags || [])" :key="tag">
+                        <span :style="`font-size:10px; font-weight:500; padding:2px 8px; border-radius:99px; background:${item.bg}; color:${item.color};`" x-text="tag"></span>
+                    </template>
+                </div>
+
             </div>
         </template>
     </div>
@@ -44,7 +50,7 @@
     {{-- Card footer --}}
     <div style="margin-top:20px; padding-top:16px; border-top:1px solid #f0f0f8; display:flex; align-items:center; gap:8px;">
         <x-icon name="clock" color="#9ca3af" size="14" />
-        <p style="font-size:12px; color:#9ca3af; margin:0;">Diperbarui berdasarkan 42 jawaban kamu</p>
+        <p style="font-size:12px; color:#9ca3af; margin:0;">Ini hanya contoh — hasil asli berdasarkan jawaban kamu</p>
     </div>
 
 </div>

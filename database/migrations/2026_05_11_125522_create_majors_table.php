@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('majors', function (Blueprint $table) {
             $table->id();
             $table->string('major_name');
-            $table->string('description');
-            $table->string('faculty');
+            $table->string('field');
+            $table->text('description');
+            $table->text('interests')->nullable();
+            $table->text('keywords')->nullable();
+            $table->text('combined_text')->nullable();
             $table->timestamps();
         });
     }

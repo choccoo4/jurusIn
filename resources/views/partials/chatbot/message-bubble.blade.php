@@ -71,7 +71,7 @@
             " x-text="msg.text"></span>
         </div>
 
-        {{-- Result cards (if any) --}}
+        {{-- Result cards (kalau mau ada result di chatbot sudah ada, tapi sementara null dulu) --}}
         <template x-if="msg.results && msg.results.length">
             <div style="
                 display: flex;

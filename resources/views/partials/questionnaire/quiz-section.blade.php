@@ -28,7 +28,7 @@
                 {{-- Question text --}}
                 <div style="min-height:64px; margin-bottom:24px;">
                     <h2 style="font-size:18px; font-weight:700; color:#1e1b4b; line-height:1.5; margin:0;"
-                        x-text="currentQuestion.question">
+                        x-text="currentQuestion.question_text">
                     </h2>
                 </div>
 

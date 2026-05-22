@@ -9,11 +9,11 @@ export function questionnaire(questions) {
 
         // Skala Likert
         scale: [
-            { value: 1},
-            { value: 2},
-            { value: 3},
-            { value: 4},
-            { value: 5},
+            { value: 1 },
+            { value: 2 },
+            { value: 3 },
+            { value: 4 },
+            { value: 5 },
         ],
 
         get currentQuestion() {
@@ -60,19 +60,49 @@ export function questionnaire(questions) {
         submit() {
             if (!this.hasAnswer) return
 
-            // Format jawaban dengan label
             const formattedAnswers = this.questions.map((q, i) => ({
-                question: q.question,
+                question_id: q.id,
+                question: q.question_text,
+                category: q.riasec_category,
                 answer: this.answers[i] ?? null,
                 label: this.answers[i] ? this.getLabel(this.answers[i]) : null,
                 value: this.answers[i] ?? null,
             }))
 
-            // Store answers in sessionStorage
+            // Generate session ID
+            const sessionId = 'ses-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9)
+
+            // Simpan ke sessionStorage
+            sessionStorage.setItem('session_id', sessionId)
             sessionStorage.setItem('quiz_answers', JSON.stringify(this.answers))
             sessionStorage.setItem('quiz_questions', JSON.stringify(formattedAnswers))
 
+            // Kirim ke backend
+            this.saveToDatabase(sessionId, formattedAnswers)
+
             this.done = true
+        },
+
+        async saveToDatabase(sessionId, answers) {
+            try {
+                const response = await fetch('/questionnaire/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        questionnaire_id: 1,
+                        answers: answers,
+                    }),
+                })
+
+                const data = await response.json()
+                console.log('Saved to DB:', data)
+            } catch (error) {
+                console.error('Failed to save:', error)
+            }
         },
     }
 }

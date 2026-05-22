@@ -7,8 +7,7 @@
 
         {{-- Main content --}}
         <div x-data="resultPage({{ json_encode($recommendations) }}, {{ json_encode($insight) }})"
-             x-init="init()"
-             style="display:flex; flex-direction:column; gap:16px;">
+            style="display:flex; flex-direction:column; gap:16px;">
 
             {{-- Top recommendation hero card --}}
             @include('partials.results.top-card')
@@ -18,9 +17,6 @@
 
             {{-- Profile insight --}}
             @include('partials.results.insight-card')
-
-            {{-- University suggestions --}}
-            @include('partials.results.university-card')
 
             {{-- Action buttons --}}
             @include('partials.results.result-actions')

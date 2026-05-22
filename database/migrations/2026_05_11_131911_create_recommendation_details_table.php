@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('recommendation_details', function (Blueprint $table) {
             $table->id();
-            $table->float('similiarity_score');
+            $table->float('similarity_score');
+            $table->float('riasec_match_score')->nullable();
             $table->integer('rank');
-            $table->string('reasoning');
+            $table->text('reasoning')->nullable();
 
             $table->foreignId('recommendation_id')->constrained('recommendations')->cascadeOnDelete();
             $table->foreignId('major_id')->constrained('majors')->cascadeOnDelete();

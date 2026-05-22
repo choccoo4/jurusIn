@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('answer_options', function (Blueprint $table) {
+        Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->text('option_text');
+            $table->text('question_text');
             $table->integer('order_number');
 
-            $table->foreignId('question_id')->constrained('questions')->cascadeOnDelete();
+            $table->foreignId('questionnaire_id')->constrained('questionnaires')->onDelete('cascade');
+            $table->enum('riasec_category', ['R', 'I', 'A', 'S', 'E', 'C']);
+            $table->float('riasec_weight')->default(1);
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('answer_options');
+        Schema::dropIfExists('questions');
     }
 };

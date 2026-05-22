@@ -16,7 +16,9 @@ import { resultPreview } from './components/resultPreview.js'
 import { faqAccordion }  from './components/faqAccordion.js'
 import { chatbot }       from './components/chatbot.js'
 import { questionnaire } from './components/questionnaire.js'
+import { resultPage }   from './components/resultPage.js'
 
+Alpine.data('resultPage',   resultPage)
 Alpine.data('navbar',        navbar)
 Alpine.data('heroCta',       heroCta)
 Alpine.data('resultPreview', resultPreview)

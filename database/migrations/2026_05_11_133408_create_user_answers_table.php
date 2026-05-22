@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('user_answers', function (Blueprint $table) {
             $table->id();
-            $table->text('free_text');
+            $table->integer('answer_value')->unsigned(); // 1 - 5
 
-            $table->foreignId('session_id')->constrained('questionnaire_sessions')->cascadeOnDelete();
+            $table->foreignId('questionnaire_session_id')->constrained('questionnaire_sessions')->cascadeOnDelete();
             $table->foreignId('question_id')->constrained('questions')->cascadeOnDelete();
-            $table->foreignId('option_id')->constraioned('answer_options')->cascadeOndelete();
             $table->timestamps();
         });
     }

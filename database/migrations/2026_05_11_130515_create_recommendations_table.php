@@ -13,12 +13,8 @@ return new class extends Migration
     {
         Schema::create('recommendations', function (Blueprint $table) {
             $table->id();
-            $table->string('input_summary');
-
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->text('input_profile_text');          // Gabungan Chatbot dan kuesioner untuk input SBERT
             $table->foreignId('questionnaire_session_id')->constrained('questionnaire_sessions')->cascadeOnDelete();
-            $table->foreignId('chatbot_session_id')->constrained('chatbot_sessions')->nullOnDelete();
-
             $table->timestamps();
         });
     }

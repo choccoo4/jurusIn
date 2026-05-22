@@ -15,40 +15,53 @@ class ResultsController extends Controller
     }
 
     // -------------------------------------------------------------------------
-    // Replace with real SBERT output once backend is connected.
-    // Each item maps to the resultPage Alpine component.
+    // Nanti di ganti dengan real output SBERT
     // -------------------------------------------------------------------------
+
 
     private function recommendations(): array
     {
         return [
             [
-                'name'        => 'Teknik Informatika',
-                'score'       => 92,
+                'rank'        => 1,
+                'major'       => 'Teknik Informatika',
                 'description' => 'Cocok untuk kamu yang suka logika, teknologi, dan problem solving berbasis kode.',
                 'color'       => '#4f46e5',
                 'tags'        => ['Logika', 'Coding', 'Problem Solving'],
+                'traits'      => [
+                    ['label' => 'Kemampuan Analitis', 'val' => 88],
+                    ['label' => 'Pemikiran Logis', 'val' => 85],
+                    ['label' => 'Kreativitas', 'val' => 72],
+                    ['label' => 'Orientasi Sosial', 'val' => 65],
+                ],
             ],
             [
-                'name'        => 'Sistem Informasi',
-                'score'       => 85,
+                'rank'        => 2,
+                'major'       => 'Sistem Informasi',
                 'description' => 'Gabungan antara bisnis dan teknologi — ideal untuk yang suka keduanya.',
                 'color'       => '#7c3aed',
                 'tags'        => ['Bisnis', 'Teknologi', 'Manajemen'],
             ],
             [
-                'name'        => 'Data Science',
-                'score'       => 81,
+                'rank'        => 3,
+                'major'       => 'Data Science',
                 'description' => 'Mengolah data besar menjadi insight yang berdampak nyata.',
                 'color'       => '#6366f1',
                 'tags'        => ['Statistik', 'AI', 'Analisis'],
             ],
             [
-                'name'        => 'Manajemen Bisnis',
-                'score'       => 74,
+                'rank'        => 4,
+                'major'       => 'Manajemen Bisnis',
                 'description' => 'Fokus pada strategi, kepemimpinan, dan pengelolaan organisasi.',
                 'color'       => '#8b5cf6',
                 'tags'        => ['Strategi', 'Leadership', 'Bisnis'],
+            ],
+            [
+                'rank'        => 5,
+                'major'       => 'UI/UX Design',
+                'description' => 'Menggabungkan kreativitas visual dengan pemahaman pengguna.',
+                'color'       => '#a78bfa',
+                'tags'        => ['Desain', 'Kreatif', 'Teknologi'],
             ],
         ];
     }

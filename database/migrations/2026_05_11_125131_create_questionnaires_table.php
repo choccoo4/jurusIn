@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('questionnaires', function (Blueprint $table) {
-            $table->id();
+            $table->id(); //tabel ini untuk nyimpan versi kuesioner, kalau kedepan nya ada perkembangan RIASEC
             $table->string('title');
             $table->text('description');
-            $table->boolean('isActive');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
