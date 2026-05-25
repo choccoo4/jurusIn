@@ -14,6 +14,6 @@ Route::get('/chat',      [ChatbotController::class, 'index'])->name('quiz.chat')
 Route::get('/hasil',     [ResultsController::class, 'index'])->name('results');
 Route::post('/questionnaire/save', [QuestionnaireController::class, 'save']);
 
+
 Route::get('/privasi',   fn() => view('pages.privacy'))->name('privacy');
 Route::get('/ketentuan', fn() => view('pages.terms'))->name('terms');
-
