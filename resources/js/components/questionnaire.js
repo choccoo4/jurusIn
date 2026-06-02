@@ -16,6 +16,14 @@ export function questionnaire(questions) {
             { value: 5 },
         ],
 
+        init() {
+            // GUARD: Cek apakah user udah pernah isi kuesioner
+            if (sessionStorage.getItem('quiz_completed')) {
+                window.location.href = '/chat';
+                return;
+            }
+        },
+
         get currentQuestion() {
             return this.questions[this.currentIndex]
         },
@@ -77,6 +85,8 @@ export function questionnaire(questions) {
             sessionStorage.setItem('quiz_answers', JSON.stringify(this.answers))
             sessionStorage.setItem('quiz_questions', JSON.stringify(formattedAnswers))
 
+            sessionStorage.setItem('quiz_completed', 'true')
+
             // Kirim ke backend
             this.saveToDatabase(sessionId, formattedAnswers)
 
@@ -99,7 +109,20 @@ export function questionnaire(questions) {
                 })
 
                 const data = await response.json()
+
+                if (!data.success && data.message) {
+                    // Session udah dipakai
+                    console.warn('⚠️ Session already used:', data.message)
+                    return
+                }
+                
                 console.log('Saved to DB:', data)
+
+                if (data.profile_text) {
+                    sessionStorage.setItem('profile_text', data.profile_text)
+                    console.log('Profile text saved to sessionStorage')
+                }
+
             } catch (error) {
                 console.error('Failed to save:', error)
             }

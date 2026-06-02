@@ -43,6 +43,18 @@ class QuestionnaireController extends Controller
             'answers.*.category'    => 'required|string|in:R,I,A,S,E,C',
         ]);
 
+        $existing = DB::table('questionnaire_sessions')
+            ->where('session_id', $validated['session_id'])
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session sudah digunakan.',
+                'session_id' => $validated['session_id'],
+            ], 409);
+        }
+
         DB::beginTransaction();
         try {
             // 1. Simpan session
@@ -84,6 +96,8 @@ class QuestionnaireController extends Controller
             }
 
             DB::commit();
+            session(['quiz_completed' => true]);
+
 
             return response()->json([
                 'success'    => true,

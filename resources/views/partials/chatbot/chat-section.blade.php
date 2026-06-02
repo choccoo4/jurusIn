@@ -33,23 +33,14 @@
             </div>
 
             {{-- Suggestion chips - Bungkus luar untuk masking --}}
-            <div x-show="showSuggestions" x-transition
-                style="
-                    position: relative;
-                    padding: 4px 0 12px 0;
-                ">
+            <div x-show="showSuggestions" x-transition style="position: relative;padding: 4px 0 12px 0;">
+                
+                <p style="font-size:11px; color:#9ca3af; margin:0 24px 10px; line-height:1.5;">
+                    💡 Ceritakan secara singkat dan fokus pada pengalaman yang paling menggambarkan diri kamu.
+                </p>
 
                 {{-- Gradient fade kanan --}}
-                <div style="
-                    position: absolute;
-                    right: 0;
-                    top: 0;
-                    bottom: 0;
-                    width: 40px;
-                    background: linear-gradient(to right, transparent, #fff);
-                    z-index: 2;
-                    pointer-events: none;
-                "></div>
+                <div style="position: absolute;right: 0;top: 0;bottom: 0;width: 40px;background: linear-gradient(to right, transparent, #fff);z-index: 2;pointer-events: none;"></div>
 
                 {{-- Scroll container --}}
                 <div style="
@@ -65,7 +56,7 @@
                         display: inline-flex;
                         gap: 8px;
                     ">
-                        <template x-for="chip in suggestions" :key="chip">
+                        <template x-for="chip in currentSuggestions" :key="chip">
                             <button @click="sendChip(chip)"
                                 style="
                                     flex-shrink: 0;
