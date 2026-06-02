@@ -4,7 +4,7 @@ export function questionnaire(questions) {
     return {
         questions,
         currentIndex: 0,
-        answers: {},        // { 0: 4, 1: 5, 2: 3, ... }
+        answers: {}, // { 0: 4, 1: 5, 2: 3, ... }
         done: false,
 
         // Skala Likert
@@ -25,48 +25,48 @@ export function questionnaire(questions) {
         },
 
         get currentQuestion() {
-            return this.questions[this.currentIndex]
+            return this.questions[this.currentIndex];
         },
 
         get progress() {
-            return ((this.currentIndex + 1) / this.questions.length) * 100
+            return ((this.currentIndex + 1) / this.questions.length) * 100;
         },
 
         get isLast() {
-            return this.currentIndex === this.questions.length - 1
+            return this.currentIndex === this.questions.length - 1;
         },
 
         get isFirst() {
-            return this.currentIndex === 0
+            return this.currentIndex === 0;
         },
 
         // Cek apakah jawaban sudah dipilih
         get hasAnswer() {
-            return this.answers[this.currentIndex] !== undefined
+            return this.answers[this.currentIndex] !== undefined;
         },
 
         // Pilih skala
         selectOption(value) {
-            this.answers[this.currentIndex] = value
+            this.answers[this.currentIndex] = value;
         },
 
         // Dapatkan label dari value
         getLabel(value) {
-            const scale = this.scale.find(s => s.value === value)
-            return scale ? scale.label : ''
+            const scale = this.scale.find((s) => s.value === value);
+            return scale ? scale.label : "";
         },
 
         nextStep() {
-            if (!this.hasAnswer) return
-            if (!this.isLast) this.currentIndex++
+            if (!this.hasAnswer) return;
+            if (!this.isLast) this.currentIndex++;
         },
 
         prevStep() {
-            if (!this.isFirst) this.currentIndex--
+            if (!this.isFirst) this.currentIndex--;
         },
 
         submit() {
-            if (!this.hasAnswer) return
+            if (!this.hasAnswer) return;
 
             const formattedAnswers = this.questions.map((q, i) => ({
                 question_id: q.id,
@@ -75,57 +75,61 @@ export function questionnaire(questions) {
                 answer: this.answers[i] ?? null,
                 label: this.answers[i] ? this.getLabel(this.answers[i]) : null,
                 value: this.answers[i] ?? null,
-            }))
+            }));
 
             // Generate session ID
-            const sessionId = 'ses-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9)
+            const sessionId =
+                "ses-" +
+                Date.now() +
+                "-" +
+                Math.random().toString(36).substr(2, 9);
 
             // Simpan ke sessionStorage
-            sessionStorage.setItem('session_id', sessionId)
-            sessionStorage.setItem('quiz_answers', JSON.stringify(this.answers))
-            sessionStorage.setItem('quiz_questions', JSON.stringify(formattedAnswers))
-
-            sessionStorage.setItem('quiz_completed', 'true')
+            sessionStorage.setItem("session_id", sessionId);
+            sessionStorage.setItem(
+                "quiz_answers",
+                JSON.stringify(this.answers),
+            );
+            sessionStorage.setItem(
+                "quiz_questions",
+                JSON.stringify(formattedAnswers),
+            );
 
             // Kirim ke backend
-            this.saveToDatabase(sessionId, formattedAnswers)
+            this.saveToDatabase(sessionId, formattedAnswers);
 
-            this.done = true
+            this.done = true;
         },
 
         async saveToDatabase(sessionId, answers) {
             try {
-                const response = await fetch('/questionnaire/save', {
-                    method: 'POST',
+                const response = await fetch("/questionnaire/save", {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector(
+                            'meta[name="csrf-token"]',
+                        ).content,
                     },
                     body: JSON.stringify({
                         session_id: sessionId,
                         questionnaire_id: 1,
                         answers: answers,
                     }),
-                })
+                });
 
-                const data = await response.json()
-
-                if (!data.success && data.message) {
-                    // Session udah dipakai
-                    console.warn('⚠️ Session already used:', data.message)
-                    return
-                }
-                
-                console.log('Saved to DB:', data)
+                const data = await response.json();
+                console.log("Saved to DB:", data);
 
                 if (data.profile_text) {
-                    sessionStorage.setItem('profile_text', data.profile_text)
-                    console.log('Profile text saved to sessionStorage')
+                    sessionStorage.setItem(
+                        "riasec_profile_text",
+                        data.profile_text,
+                    );
                 }
-
             } catch (error) {
-                console.error('Failed to save:', error)
+                console.error("Failed to save:", error);
             }
         },
-    }
+    };
 }
