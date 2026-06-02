@@ -13,6 +13,7 @@ Route::get('/mulai',     [QuestionnaireController::class, 'index'])->name('quest
 Route::get('/chat',      [ChatbotController::class, 'index'])->name('quiz.chat');
 Route::get('/hasil',     [ResultsController::class, 'index'])->name('results');
 Route::post('/questionnaire/save', [QuestionnaireController::class, 'save']);
+Route::post('/chatbot/save', [ChatbotController::class, 'save']);
 
 
 Route::get('/privasi',   fn() => view('pages.privacy'))->name('privacy');
