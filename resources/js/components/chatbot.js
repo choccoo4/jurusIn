@@ -10,14 +10,47 @@ export function chatbot() {
         _locking: false,
         currentQuestion: 0,
 
-        suggestions: [
-            "Membuat atau merakit sesuatu",
-            "Menganalisis masalah & cari solusi",
-            "Mendesain atau berkreasi visual",
-            "Diskusi & bantu orang lain",
-            "Memimpin atau mengatur tim",
-            "Mengatur & merapikan sistem",
-        ],
+        get currentSuggestions() {
+            const suggestionMap = {
+                0: [ // Q1: Aktivitas yang bikin lupa waktu
+                    'Membuat atau merakit sesuatu',
+                    'Menganalisis masalah & cari solusi',
+                    'Mendesain atau berkreasi visual',
+                    'Diskusi & bantu orang lain',
+                    'Memimpin atau mengatur tim',
+                    'Mengatur & merapikan sistem',
+                ],
+                1: [ // Q2: Cara menghadapi masalah
+                    'Mencoba langsung & belajar dari pengalaman',
+                    'Menganalisis dulu sebelum bertindak',
+                    'Berdiskusi dengan teman atau mentor',
+                    'Kombinasi analisis & diskusi',
+                ],
+                2: [ // Q3: Lingkungan nyaman
+                    'Tenang & terstruktur dengan jadwal jelas',
+                    'Fleksibel & bebas bereksplorasi',
+                    'Ramai & banyak interaksi sosial',
+                    'Fokus sendiri tanpa gangguan',
+                ],
+                3: [ // Q4: Bagian yang dinikmati
+                    'Membuat atau menciptakan sesuatu',
+                    'Menganalisis & mencari solusi',
+                    'Membantu & mendukung orang lain',
+                    'Memimpin & mengatur tim',
+                    'Mengatur & merapikan sistem',
+                ],
+                4: [ // Q5: Kemampuan diandalkan
+                    'Kemampuan teknis & hands-on',
+                    'Logika & analisis mendalam',
+                    'Kreativitas & inovasi',
+                    'Komunikasi & empati',
+                    'Kepemimpinan & strategi',
+                    'Ketelitian & detail',
+                ],
+            };
+
+            return suggestionMap[this.currentQuestion] || [];
+        },
 
         // ========== PERTANYAAN BOT ==========
         questions: [
