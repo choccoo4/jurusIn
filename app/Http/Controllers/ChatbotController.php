@@ -7,7 +7,9 @@ use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request; 
 use App\Http\Traits\ApiResponse;
+use App\Services\ChatbotValidationService;
 use App\Http\Requests\SaveChatbotRequest;
 use App\Services\ChatbotService;
 
@@ -16,12 +18,31 @@ class ChatbotController extends Controller
     use ApiResponse;
 
     public function __construct(
+        private readonly ChatbotValidationService $validator,
         private readonly ChatbotService $chatbotService,
     ) {}
+
 
     public function index(): View
     {
         return view('pages.chatbot');
+    }
+
+    public function processAnswer(Request $request)
+    {
+        $result = $this->validator->processAnswer(
+            $request->question_id,
+            $request->answer,
+            session('chatbot_state', [])
+        );
+        return response()->json($result);
+    }
+
+    public function startChat()
+    {
+        return response()->json([
+            'first_question' => $this->validator->getFirstQuestion(),
+        ]);
     }
 
     public function save(SaveChatbotRequest $request): JsonResponse

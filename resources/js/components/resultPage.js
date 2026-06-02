@@ -29,7 +29,7 @@ export function resultPage(recommendations, insight) {
         init() {
             const raw = sessionStorage.getItem('quiz_questions')
             if (raw) {
-                console.log('Quiz answers available for personalisation')
+                console.log('Quiz answers available for personalization')
             }
         },
     }
