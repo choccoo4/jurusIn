@@ -15,6 +15,8 @@ Route::get('/hasil',     [ResultsController::class, 'index'])->name('results');
 Route::post('/questionnaire/save', [QuestionnaireController::class, 'save']);
 Route::post('/chatbot/save', [ChatbotController::class, 'save']);
 
+Route::get('/chatbot/start', [ChatbotController::class, 'startChat']);
+
 
 Route::get('/privasi',   fn() => view('pages.privacy'))->name('privacy');
 Route::get('/ketentuan', fn() => view('pages.terms'))->name('terms');
