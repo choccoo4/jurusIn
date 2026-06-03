@@ -15,8 +15,10 @@ Route::get('/hasil',     [ResultsController::class, 'index'])->name('results');
 Route::post('/questionnaire/save', [QuestionnaireController::class, 'save']);
 Route::post('/chatbot/save', [ChatbotController::class, 'save']);
 
-Route::get('/chatbot/start', [ChatbotController::class, 'startChat']);
 Route::post('/chatbot/process', [ChatbotController::class, 'processAnswer']);
+Route::post('/chatbot/finalize', [ChatbotController::class, 'finalize']);
+Route::get('/chatbot/start', [ChatbotController::class, 'startChat']);
+Route::post('/chatbot/save-to-db', [ChatbotController::class, 'saveToDatabase']);
 
 
 
