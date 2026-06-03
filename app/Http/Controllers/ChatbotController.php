@@ -2,69 +2,138 @@
 
 namespace App\Http\Controllers;
 
-use Throwable;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request; 
-use App\Http\Traits\ApiResponse;
 use App\Services\ChatbotValidationService;
-use App\Http\Requests\SaveChatbotRequest;
-use App\Services\ChatbotService;
 
 class ChatbotController extends Controller
 {
-    use ApiResponse;
+    private ChatbotValidationService $validator;
 
-    public function __construct(
-        private readonly ChatbotValidationService $validator,
-        private readonly ChatbotService $chatbotService,
-    ) {}
-
+    public function __construct(ChatbotValidationService $validator)
+    {
+        $this->validator = $validator;
+    }
 
     public function index(): View
     {
         return view('pages.chatbot');
     }
 
+    /**
+     * Process single answer — stateful.
+     */
     public function processAnswer(Request $request)
     {
+        $request->validate([
+            'question_id' => 'required|integer|min:1|max:5',
+            'answer' => 'required|string',
+        ]);
+
+        $sessionState = session('chatbot_state', [
+            'current_question' => 1,
+            'answers' => [],
+        ]);
+
         $result = $this->validator->processAnswer(
             $request->question_id,
             $request->answer,
-            session('chatbot_state', [])
+            $sessionState
         );
+
+        if ($result['valid']) {
+            $updatedAnswers = $result['answers'] ?? $sessionState['answers'];
+
+            session(['chatbot_state' => [
+                'current_question' => $result['current_question'] ?? $request->question_id + 1,
+                'answers' => $updatedAnswers,
+            ]]);
+
+            if ($result['completed']) {
+                $chatProfileText = $this->validator->generateChatProfileText($updatedAnswers);
+                $result['chat_profile_text'] = $chatProfileText;
+                $result['answers'] = $updatedAnswers;
+            }
+        }
+
         return response()->json($result);
     }
 
+    /**
+     * Finalize — combine RIASEC + Chatbot.
+     */
+    public function finalize(Request $request)
+    {
+        $sessionState = session('chatbot_state', []);
+        $answers = $sessionState['answers'] ?? [];
+        $profileText = $request->profile_text ?? '';
+
+        if (empty($answers)) {
+            return response()->json(['error' => 'No answers found'], 400);
+        }
+
+        // Pakai jawaban mentah (nanti pakai cleaned chat)
+        $rawAnswers = array_column($answers, 'answer');
+        $chatSummary = implode("\n", array_map(function ($a) {
+            return "- {$a}";
+        }, $rawAnswers));
+
+        $inputProfileText = $profileText . "\n\nDari percakapan chatbot:\n" . $chatSummary;
+
+        session()->forget('chatbot_state');
+
+        return response()->json([
+            'success' => true,
+            'input_profile_text' => $inputProfileText,
+            'chat_summary' => $chatSummary,
+            'total_answers' => count($answers),
+        ]);
+    }
+
+    /**
+     * Get first question.
+     */
     public function startChat()
     {
+        session()->forget('chatbot_state');
+        session(['chatbot_state' => [
+            'current_question' => 1,
+            'answers' => [],
+        ]]);
+
         return response()->json([
             'first_question' => $this->validator->getFirstQuestion(),
         ]);
     }
 
-    public function save(SaveChatbotRequest $request): JsonResponse
+    public function saveToDatabase(Request $request)
     {
-        try {
-            $recommendation = DB::transaction(
-                fn() => $this->chatbotService->saveRecommendation(
-                    $request->validated('session_id'),
-                    $request->validated('chat_data'),
-                )
-            );
+        $request->validate([
+            'session_id' => 'required|string',
+            'input_profile_text' => 'required|string',
+        ]);
 
-            return $this->successResponse([
-                'session_id'         => $request->validated('session_id'),
-                'recommendation_id'  => $recommendation->id,
-                'input_profile_text' => $recommendation->input_profile_text,
-            ]);
-        } catch (ModelNotFoundException $e) {
-            return $this->errorResponse($e->getMessage(), 404);
-        } catch (Throwable $e) {
-            report($e);
-            return $this->errorResponse('Terjadi kesalahan pada server. Silakan coba lagi.', 500);
+        $session = DB::table('questionnaire_sessions')
+            ->where('session_id', $request->session_id)
+            ->first();
+
+        if (!$session) {
+            return response()->json(['error' => 'Session not found'], 404);
         }
+
+        DB::table('recommendations')->insert([
+            'questionnaire_session_id' => $session->id,
+            'input_profile_text' => $request->input_profile_text,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        session(['chatbot_completed' => true]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Input profile text saved to database',
+        ]);
     }
 }
