@@ -16,6 +16,8 @@ Route::post('/questionnaire/save', [QuestionnaireController::class, 'save']);
 Route::post('/chatbot/save', [ChatbotController::class, 'save']);
 
 Route::get('/chatbot/start', [ChatbotController::class, 'startChat']);
+Route::post('/chatbot/process', [ChatbotController::class, 'processAnswer']);
+
 
 
 Route::get('/privasi',   fn() => view('pages.privacy'))->name('privacy');
