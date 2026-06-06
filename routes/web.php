@@ -9,18 +9,16 @@ use App\Http\Controllers\ResultsController;
 Route::get('/', [LandingController::class, 'index'])->name('home');
 
 // chatbot & kuesioner
-Route::get('/mulai',     [QuestionnaireController::class, 'index'])->name('questionnaire');
-Route::get('/chat',      [ChatbotController::class, 'index'])->name('quiz.chat');
-Route::get('/hasil',     [ResultsController::class, 'index'])->name('results');
+Route::get('/mulai', [QuestionnaireController::class, 'index'])->name('questionnaire');
+Route::get('/chat',      [ChatbotController::class, 'index'])->name('quiz.chat')->middleware('quiz.done');
+Route::get('/hasil', [ResultsController::class, 'index'])->name('results')->middleware('chat.done');
 Route::post('/questionnaire/save', [QuestionnaireController::class, 'save']);
-Route::post('/chatbot/save', [ChatbotController::class, 'save']);
 
+// Chatbot API
 Route::post('/chatbot/process', [ChatbotController::class, 'processAnswer']);
 Route::post('/chatbot/finalize', [ChatbotController::class, 'finalize']);
 Route::get('/chatbot/start', [ChatbotController::class, 'startChat']);
 Route::post('/chatbot/save-to-db', [ChatbotController::class, 'saveToDatabase']);
-
-
 
 Route::get('/privasi',   fn() => view('pages.privacy'))->name('privacy');
 Route::get('/ketentuan', fn() => view('pages.terms'))->name('terms');
