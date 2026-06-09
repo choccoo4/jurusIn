@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\middleware;
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
@@ -15,6 +15,11 @@ class ChatbotMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (!session('chatbot_completed')) {
+            return redirect()->route('quiz.chat')
+                ->with('message', 'Silahkan selesaikan chatbot terlebih dahulu!');
+        }
+
         return $next($request);
     }
 }
