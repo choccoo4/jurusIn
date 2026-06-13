@@ -7,7 +7,7 @@
         @include('partials.chatbot.chat-header')
 
         {{-- Chat box --}}
-        <div x-data="chatbot()"
+        <div x-data="chatbot()" @subject-submit.window="submitSubjects($event.detail)"
             style="background:#fff; border-radius:24px; border:1px solid #e0e0f0; overflow:hidden; display:flex; flex-direction:column; height:calc(100vh - 200px); min-height:500px;">
 
             {{-- Messages area --}}

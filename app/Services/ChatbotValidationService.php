@@ -10,6 +10,9 @@ class ChatbotValidationService
     private array $questions;
     private array $blacklist;
     private int $minWords;
+    private array $subjects;
+    private string $subjectPrompt;
+    private int $subjectRequired;
 
     public function __construct()
     {
@@ -17,6 +20,9 @@ class ChatbotValidationService
         $this->questions = $config['questions'];
         $this->blacklist = $config['blacklist'];
         $this->minWords = $config['min_words'];
+        $this->subjects = $config['subjects'];
+        $this->subjectPrompt = $config['subject_selection_prompt'];
+        $this->subjectRequired = $config['subject_selection_required'];
     }
 
     /**
@@ -50,14 +56,20 @@ class ChatbotValidationService
         ];
 
         $nextQuestionId = $questionId + 1;
+        $isLastQuestion = $nextQuestionId > count($this->questions);
 
-        // Cek apakah ini pertanyaan terakhir
-        if ($nextQuestionId > count($this->questions)) {
+        // last questions. meminta data nilai dari 4 mata pelajaran yang dikuasai.
+        if ($isLastQuestion) {
             return [
                 'valid' => true,
-                'completed' => true,
+                'completed' => false,
+                'awaiting_subjects' => true,
                 'answers' => $answers,
-                'message' => 'Semua pertanyaan selesai!',
+                'subject_prompt' => $this->subjectPrompt,
+                'subjects' => $this->subjects,
+                'subject_required' => $this->subjectRequired,
+                'current_question' => $questionId,
+                'message' => 'Kuisoner selesai, pilih mata pelajaran.',
             ];
         }
 
@@ -79,14 +91,98 @@ class ChatbotValidationService
         ];
     }
 
+    public function processSubjectSelection(array $subjects, array $sessionState = []): array
+    {
+        if (count($subjects) !== $this->subjectRequired) {
+            return [
+                'valid' => false,
+                'message' => "Pilih tepat {$this->subjectRequired} mata pelajaran ya!",
+            ];
+        }
+
+        $validSubjectNames = $this->subjects;
+        $cleaned = [];
+
+        foreach ($subjects as $index => $item) {
+            $no = $index + 1;
+
+            if (!isset($item['name']) || !isset($item['grade'])) {
+                return [
+                    'valid' => false,
+                    'message' => "Data mata pelajaran ke-{$no} tidak lengkap.",
+                ];
+            }
+
+            $name = trim($item['name']);
+            $grade = $item['grade'];
+
+            if (!in_array($name, $validSubjectNames, true)) {
+                return [
+                    'valid' => false,
+                    'message' => "Mata pelajaran \"{$name}\" tidak dikenali, pilih dari daftar yang tersedia.",
+                ];
+            }
+
+            if (!is_numeric($grade)) {
+                return [
+                    'valid' => false,
+                    'message' => "Nilai untuk \"{$name}\" harus berupa angka.",
+                ];
+            }
+
+            $gradeFloat = (float) $grade;
+            if ($gradeFloat < 0 || $gradeFloat > 100) {
+                return [
+                    'valid' => false,
+                    'message' => "Nilai untuk \"{$name}\" harus antara 0 sampai 100.",
+                ];
+            }
+
+            $cleaned[] = [
+                'name' => $name,
+                'grade' => round($gradeFloat, 1),
+            ];
+        }
+
+        // duplikat mapel
+        $names = array_column($cleaned, 'name');
+        if (count(array_unique($names)) !== count($names)) {
+            return [
+                'valid' => false,
+                'message' => 'Tidak bisa memilih mapel yang sama.',
+            ];
+        }
+
+        $answers = $sessionState['answers'] ?? [];
+        $chatProfileText = $this->generateChatProfileText($answers, $cleaned);
+
+        return [
+            'valid' => true,
+            'completed' => true,
+            'answers' => $answers,
+            'selected_subjects' => $cleaned,
+            'chat_profile_text' => $chatProfileText,
+            'message' => 'Semua chat selesai.'
+        ];
+    }
+
     /**
      * Generate combined profile text.
      */
-    public function generateChatProfileText(array $answers): string
+    public function generateChatProfileText(array $answers, array $selectedSubjects = []): string
     {
-        return implode("\n", array_map(function ($a) {
-            return "- {$a['answer']}";
-        }, $answers));
+        $lines = array_map(fn($a) => "- {$a['answer']}", $answers);
+        $text = implode("\n", $lines);
+
+        if (!empty($selectedSubjects)) {
+            $subjectLines = array_map(
+                fn($s) => "{$s['name']} (nilai: {$s['grade']})",
+                $selectedSubjects
+            );
+            $text .= "\n\nMata pelajaran favorit: " . implode(', ', $subjectLines) . '.';
+        }
+
+        return $text;
     }
 
     /**
@@ -100,6 +196,17 @@ class ChatbotValidationService
                 'question' => $q['question'],
             ];
         }, $this->questions);
+    }
+
+    // return daftar mata pelajaran + prompt
+
+    public function getSubjectSelectionMeta(): array
+    {
+        return [
+            'prompt' => $this->subjectPrompt,
+            'subjects' => $this->subjects,
+            'required' => $this->subjectRequired,
+        ];
     }
 
     /**
@@ -140,7 +247,9 @@ class ChatbotValidationService
         }
 
         $wordCount = str_word_count($lowerAnswer);
-        if ($wordCount < $this->minWords) {
+        // Hitung juga karakter sebagai fallback (kata bahasa Indonesia kadang dihitung berbeda)
+        $charCount = strlen(trim($lowerAnswer));
+        if ($wordCount < $this->minWords && $charCount < 10) {
             return ['valid' => false, 'message' => 'Boleh ceritakan lebih detail? Jawaban yang lebih panjang membantu AI memahami kamu lebih baik.'];
         }
 

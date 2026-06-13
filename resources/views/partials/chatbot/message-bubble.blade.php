@@ -71,6 +71,111 @@
             " x-text="msg.text"></span>
         </div>
 
+        {{-- Subject Picker Form --}}
+        <template x-if="msg.subjectInput">
+            <div style="width:100%; margin-top:8px;" x-data="{
+                available: msg.subjectInput.subjects,
+                required: msg.subjectInput.required,
+                selected: [],
+                grades: {},
+                submitted: false,
+                error: '',
+                toggleSubject(name) {
+                    const idx = this.selected.indexOf(name);
+                    if (idx >= 0) {
+                        this.selected.splice(idx, 1);
+                        delete this.grades[name];
+                    } else {
+                        if (this.selected.length < this.required) {
+                            this.selected.push(name);
+                            this.grades[name] = '';
+                        }
+                    }
+                    this.error = '';
+                },
+                isSelected(name) { return this.selected.includes(name); },
+                async submit() {
+                    if (this.selected.length !== this.required) {
+                        this.error = 'Pilih tepat ' + this.required + ' mata pelajaran ya!';
+                        return;
+                    }
+                    for (const name of this.selected) {
+                        const g = parseFloat(this.grades[name]);
+                        if (this.grades[name] === '' || isNaN(g)) {
+                            this.error = 'Isi nilai untuk ' + name;
+                            return;
+                        }
+                        if (g < 0 || g > 100) {
+                            this.error = 'Nilai ' + name + ' harus antara 0–100';
+                            return;
+                        }
+                    }
+                    this.submitted = true;
+                    this.error = '';
+                    const payload = this.selected.map(name => ({ name, grade: parseFloat(this.grades[name]) }));
+                    $dispatch('subject-submit', payload);
+                }
+            }">
+                {{-- Chip grid untuk pilih mapel --}}
+                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                    <template x-for="subj in available" :key="subj">
+                        <button
+                            @click="if(!submitted) toggleSubject(subj)"
+                            :disabled="submitted || (!isSelected(subj) && selected.length >= required)"
+                            :style="isSelected(subj)
+                                ? 'padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; background:#4f46e5; color:#fff; border:1.5px solid #4f46e5; cursor:pointer; transition:all 0.15s;'
+                                : (selected.length >= required && !isSelected(subj))
+                                    ? 'padding:6px 14px; border-radius:20px; font-size:12px; font-weight:500; background:#f3f4f6; color:#9ca3af; border:1.5px solid #e5e7eb; cursor:not-allowed; transition:all 0.15s;'
+                                    : 'padding:6px 14px; border-radius:20px; font-size:12px; font-weight:500; background:#eef2ff; color:#4f46e5; border:1.5px solid #c7d2fe; cursor:pointer; transition:all 0.15s;'"
+                            x-text="subj">
+                        </button>
+                    </template>
+                </div>
+
+                {{-- Counter --}}
+                <p style="font-size:12px; color:#6b7280; margin-bottom:10px;">
+                    Dipilih: <span x-text="selected.length" style="font-weight:600; color:#4f46e5;"></span> / <span x-text="required"></span>
+                </p>
+
+                {{-- Input nilai untuk yang sudah dipilih --}}
+                <template x-if="selected.length > 0">
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+                        <template x-for="name in selected" :key="name">
+                            <div style="display:flex; align-items:center; gap:10px; background:#f5f4ff; border-radius:12px; padding:8px 12px; border:1px solid #e0e0f0;">
+                                <span style="flex:1; font-size:13px; font-weight:500; color:#1e1b4b;" x-text="name"></span>
+                                <input
+                                    type="number"
+                                    min="0" max="100"
+                                    :disabled="submitted"
+                                    x-model="grades[name]"
+                                    placeholder="Nilai"
+                                    style="width:70px; padding:6px 10px; border-radius:8px; border:1px solid #c7d2fe; font-size:13px; text-align:center; color:#1e1b4b; background:#fff; outline:none;"
+                                    onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 2px rgba(99,102,241,0.15)';"
+                                    onblur="this.style.borderColor='#c7d2fe'; this.style.boxShadow='none';"
+                                >
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                {{-- Error message --}}
+                <p x-show="error" x-text="error" style="font-size:12px; color:#ef4444; margin-bottom:8px;"></p>
+
+                {{-- Submit button --}}
+                <button
+                    @click="submit()"
+                    :disabled="submitted || selected.length !== required"
+                    :style="(submitted || selected.length !== required)
+                        ? 'padding:10px 24px; border-radius:12px; font-size:13px; font-weight:600; background:#e5e7eb; color:#9ca3af; border:none; cursor:not-allowed; width:100%;'
+                        : 'padding:10px 24px; border-radius:12px; font-size:13px; font-weight:600; background:linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; border:none; cursor:pointer; width:100%; box-shadow:0 4px 12px rgba(79,70,229,0.3); transition:all 0.15s;'"
+                    onmouseover="if(!this.disabled){this.style.transform='translateY(-1px)';}"
+                    onmouseout="if(!this.disabled){this.style.transform='translateY(0)';}">
+                    <span x-show="!submitted">✓ Konfirmasi Pilihan</span>
+                    <span x-show="submitted">✅ Tersimpan</span>
+                </button>
+            </div>
+        </template>
+
         {{-- Result cards (kalau mau ada result di chatbot sudah ada, tapi sementara null dulu) --}}
         <template x-if="msg.results && msg.results.length">
             <div style="

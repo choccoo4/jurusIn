@@ -6,15 +6,16 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use App\Services\ChatbotValidationService;
+use App\Services\ChatbotService;
 
 class ChatbotController extends Controller
 {
-    private ChatbotValidationService $validator;
 
-    public function __construct(ChatbotValidationService $validator)
-    {
-        $this->validator = $validator;
-    }
+
+    public function __construct(
+        private readonly ChatbotValidationService $validator,
+        private readonly ChatbotService $chatbotService,
+    ) {}
 
     public function index(): View
     {
@@ -43,18 +44,10 @@ class ChatbotController extends Controller
         );
 
         if ($result['valid']) {
-            $updatedAnswers = $result['answers'] ?? $sessionState['answers'];
-
             session(['chatbot_state' => [
                 'current_question' => $result['current_question'] ?? $request->question_id + 1,
-                'answers' => $updatedAnswers,
+                'answers' => $result['answers'] ?? $sessionState['answers'],
             ]]);
-
-            if ($result['completed']) {
-                $chatProfileText = $this->validator->generateChatProfileText($updatedAnswers);
-                $result['chat_profile_text'] = $chatProfileText;
-                $result['answers'] = $updatedAnswers;
-            }
         }
 
         return response()->json($result);
@@ -67,26 +60,21 @@ class ChatbotController extends Controller
     {
         $sessionState = session('chatbot_state', []);
         $answers = $sessionState['answers'] ?? [];
-        $profileText = $request->profile_text ?? '';
+        $selectedSubjects = $sessionState['selected_subjects'] ?? [];
 
         if (empty($answers)) {
             return response()->json(['error' => 'No answers found'], 400);
         }
 
-        // Pakai jawaban mentah (nanti pakai cleaned chat)
-        $rawAnswers = array_column($answers, 'answer');
-        $chatSummary = implode("\n", array_map(function ($a) {
-            return "- {$a}";
-        }, $rawAnswers));
+        // menggabungkan jawaban chatbot + mapel
+        $chatProfileText = $this->validator->generateChatProfileText($answers, $selectedSubjects);
 
-        $inputProfileText = $profileText . "\n\nDari percakapan chatbot:\n" . $chatSummary;
 
         session()->forget('chatbot_state');
 
         return response()->json([
             'success' => true,
-            'input_profile_text' => $inputProfileText,
-            'chat_summary' => $chatSummary,
+            'chat_summary' => $chatProfileText,
             'total_answers' => count($answers),
         ]);
     }
@@ -114,26 +102,54 @@ class ChatbotController extends Controller
             'input_profile_text' => 'required|string',
         ]);
 
-        $session = DB::table('questionnaire_sessions')
-            ->where('session_id', $request->session_id)
-            ->first();
+        try {
+            $recommendation = $this->chatbotService->saveRecommendation(
+                $request->session_id,
+                $request->input_profile_text,
+            );
 
-        if (!$session) {
-            return response()->json(['error' => 'Session not found'], 404);
+            session(['chatbot_completed' => true]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profil berhasil disimpan',
+                'recommendation_id' => $recommendation->id,
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Gagal menyimpan profil: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function submitSubjects(Request $request)
+    {
+        $request->validate([
+            'subjects'   => 'required|array|size:4',
+            'subjects.*.name' => 'required|string',
+            'subjects.*.grade' => 'required|numeric|min:0|max:100',
+        ]);
+
+        $sessionState = session('chatbot_state', ['answers' => []]);
+
+        $result = $this->validator->processSubjectSelection(
+            $request->subjects,
+            $sessionState
+        );
+
+        if ($result['valid']) {
+            session(['chatbot_state' => array_merge($sessionState, [
+                'selected_subjects' => $result['selected_subjects'],
+                'answers'           => $result['answers'],
+            ])]);
         }
 
-        DB::table('recommendations')->insert([
-            'questionnaire_session_id' => $session->id,
-            'input_profile_text' => $request->input_profile_text,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        session(['chatbot_completed' => true]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Input profile text saved to database',
-        ]);
+        return response()->json($result);
     }
 }

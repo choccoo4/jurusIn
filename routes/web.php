@@ -16,6 +16,7 @@ Route::post('/questionnaire/save', [QuestionnaireController::class, 'save']);
 
 // Chatbot API
 Route::post('/chatbot/process', [ChatbotController::class, 'processAnswer']);
+Route::post('/chatbot/submit-subjects', [ChatbotController::class, 'submitSubjects']);
 Route::post('/chatbot/finalize', [ChatbotController::class, 'finalize']);
 Route::get('/chatbot/start', [ChatbotController::class, 'startChat']);
 Route::post('/chatbot/save-to-db', [ChatbotController::class, 'saveToDatabase']);

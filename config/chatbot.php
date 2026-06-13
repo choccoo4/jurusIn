@@ -146,6 +146,25 @@ return [
         ],
     ],
 
+    'subjects' => [
+        'Matematika',
+        'Fisika',
+        'Biologi',
+        'Bahasa Indonesia',
+        'Bahasa Inggris',
+        'Ekonomi',
+        'Geografi',
+        'Sejarah',
+        'Sosiologi',
+        'Seni Budaya',
+        'Pendidikan Jasmani',
+        'PKN',
+    ],
+
+    'subject_selection_prompt' => 'Sebelum hasil rekomendasi ditampilkan, boleh pilih 4 mata pelajaran yang paling kamu sukai atau kamu kuasai. Hal ini dapat membantu sistem memahami profil kamu lebih akurat.',
+
+    'subject_selection_required' => 4,
+
     'blacklist' => [
         'gatau',
         'ga tau',
