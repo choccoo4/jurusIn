@@ -10,8 +10,6 @@ use App\Services\ChatbotService;
 
 class ChatbotController extends Controller
 {
-
-
     public function __construct(
         private readonly ChatbotValidationService $validator,
         private readonly ChatbotService $chatbotService,
@@ -60,15 +58,20 @@ class ChatbotController extends Controller
     {
         $sessionState = session('chatbot_state', []);
         $answers = $sessionState['answers'] ?? [];
-        $selectedSubjects = $sessionState['selected_subjects'] ?? [];
+        $subjects = $request->subjects ?? [];  
 
         if (empty($answers)) {
             return response()->json(['error' => 'No answers found'], 400);
         }
 
         // menggabungkan jawaban chatbot + mapel
-        $chatProfileText = $this->validator->generateChatProfileText($answers, $selectedSubjects);
-
+        $chatProfileText = $this->validator->generateChatProfileText($answers);
+        if (!empty($subjects)) {
+            $subjectText = implode(', ', array_map(function ($s) {
+                return "{$s['name']} (nilai: {$s['score']})";
+            }, $subjects));
+            $chatProfileText .= "\n\nMata pelajaran favorit: " . $subjectText . '.';
+        }
 
         session()->forget('chatbot_state');
 
@@ -126,30 +129,5 @@ class ChatbotController extends Controller
                 'error' => 'Gagal menyimpan profil: ' . $e->getMessage(),
             ], 500);
         }
-    }
-
-    public function submitSubjects(Request $request)
-    {
-        $request->validate([
-            'subjects'   => 'required|array|size:4',
-            'subjects.*.name' => 'required|string',
-            'subjects.*.grade' => 'required|numeric|min:0|max:100',
-        ]);
-
-        $sessionState = session('chatbot_state', ['answers' => []]);
-
-        $result = $this->validator->processSubjectSelection(
-            $request->subjects,
-            $sessionState
-        );
-
-        if ($result['valid']) {
-            session(['chatbot_state' => array_merge($sessionState, [
-                'selected_subjects' => $result['selected_subjects'],
-                'answers'           => $result['answers'],
-            ])]);
-        }
-
-        return response()->json($result);
     }
 }

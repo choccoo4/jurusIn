@@ -17,7 +17,6 @@ Route::middleware('quiz.done')->group(function () {
     Route::get('/chat', [ChatbotController::class, 'index'])->name('quiz.chat');
     Route::get('/chatbot/start',              [ChatbotController::class, 'startChat']);
     Route::post('/chatbot/process',           [ChatbotController::class, 'processAnswer']);
-    Route::post('/chatbot/submit-subjects',   [ChatbotController::class, 'submitSubjects']);
     Route::post('/chatbot/finalize',          [ChatbotController::class, 'finalize']);
     Route::post('/chatbot/save-to-db',        [ChatbotController::class, 'saveToDatabase']);
 });

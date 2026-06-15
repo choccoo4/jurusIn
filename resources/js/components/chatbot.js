@@ -6,8 +6,8 @@ export function chatbot() {
         showSuggestions: true,
         locked: false,
         _locking: false,
+        _sending: false,
         currentQuestion: 0,
-        awaitingSubjects: false,
 
         get currentSuggestions() {
             const suggestionMap = {
@@ -144,19 +144,18 @@ export function chatbot() {
             if (this.locked) return;
             if (withTyping) {
                 this.typing = true;
-                setTimeout(
-                    () => {
-                        this.typing = false;
-                        this.messages.push({
-                            sender: "bot",
-                            text,
-                            results,
-                            time: this.now(),
-                        });
-                        this.$nextTick(() => this.scrollToBottom());
-                    },
-                    700 + Math.random() * 400,
-                );
+                setTimeout(() => {
+                    this.typing = false;
+                    this.messages.push({
+                        sender: "bot",
+                        text,
+                        results,
+                        time: this.now(),
+                    });
+                    requestAnimationFrame(() => {
+                        this.scrollToBottom();
+                    });
+                }, 700 + Math.random() * 400);
             } else {
                 this.messages.push({
                     sender: "bot",
@@ -164,13 +163,15 @@ export function chatbot() {
                     results,
                     time: this.now(),
                 });
-                this.$nextTick(() => this.scrollToBottom());
+                requestAnimationFrame(() => {
+                    this.scrollToBottom();
+                });
             }
         },
 
         async send() {
             const text = this.input.trim();
-            if (!text || this.typing || this.locked || this.awaitingSubjects)
+            if (!text || this.typing || this.locked)
                 return;
 
             const questionId = this.currentQuestion + 1;
@@ -209,21 +210,7 @@ export function chatbot() {
                     "chat_answers",
                     JSON.stringify(validation.answers || []),
                 );
-                await this.finalizeChat();
-                return;
-            }
-
-            // Semua pertanyaan selesai — tampilkan form pilih mata pelajaran
-            if (validation.awaiting_subjects) {
-                this.showSuggestions = false;
-                this.awaitingSubjects = true;
-                setTimeout(() => {
-                    this.pushBotWithSubjectForm(
-                        validation.subject_prompt,
-                        validation.subjects,
-                        validation.subject_required,
-                    );
-                }, 800);
+                this.showSubjectModal = true
                 return;
             }
 
@@ -237,7 +224,7 @@ export function chatbot() {
         },
 
         async sendChip(chip) {
-            if (this.typing || this.locked || this.awaitingSubjects) return;
+            if (this.typing || this.locked) return;
 
             const questionId = this.currentQuestion + 1;
             const validation = await this.processAnswer(questionId, chip);
@@ -271,21 +258,7 @@ export function chatbot() {
                     "chat_answers",
                     JSON.stringify(validation.answers || []),
                 );
-                await this.finalizeChat();
-                return;
-            }
-
-            // Semua pertanyaan selesai — tampilkan form pilih mata pelajaran
-            if (validation.awaiting_subjects) {
-                this.showSuggestions = false;
-                this.awaitingSubjects = true;
-                setTimeout(() => {
-                    this.pushBotWithSubjectForm(
-                        validation.subject_prompt,
-                        validation.subjects,
-                        validation.subject_required,
-                    );
-                }, 800);
+                this.showSubjectModal = true
                 return;
             }
 
@@ -323,6 +296,7 @@ export function chatbot() {
         async finalizeChat() {
             // Ambil session_id yang benar — disimpan saat questionnaire selesai
             const sessionId = sessionStorage.getItem("session_id") || "";
+            const subjects = JSON.parse(sessionStorage.getItem('selected_subjects') || '[]');
 
             try {
                 const response = await fetch("/chatbot/finalize", {
@@ -333,7 +307,7 @@ export function chatbot() {
                             'meta[name="csrf-token"]',
                         ).content,
                     },
-                    body: JSON.stringify({}),
+                    body: JSON.stringify({ subjects: subjects }),
                 });
                 const data = await response.json();
 
@@ -391,61 +365,6 @@ export function chatbot() {
             }
         },
 
-        pushBotWithSubjectForm(promptText, subjects, required) {
-            if (this.locked) return;
-            this.typing = true;
-            setTimeout(() => {
-                this.typing = false;
-                this.messages.push({
-                    sender: "bot",
-                    text: promptText,
-                    results: null,
-                    time: this.now(),
-                    subjectInput: { subjects, required },
-                });
-                this.$nextTick(() => this.scrollToBottom());
-            }, 700);
-        },
-
-        async submitSubjects(selectedSubjects) {
-            try {
-                const response = await fetch("/chatbot/submit-subjects", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector(
-                            'meta[name="csrf-token"]',
-                        ).content,
-                    },
-                    body: JSON.stringify({ subjects: selectedSubjects }),
-                });
-                const data = await response.json();
-
-                if (!data.valid) {
-                    this.pushBot(data.message, null, false);
-                    return;
-                }
-
-                sessionStorage.setItem(
-                    "chat_profile_text",
-                    data.chat_profile_text || "",
-                );
-                sessionStorage.setItem(
-                    "chat_answers",
-                    JSON.stringify(data.answers || []),
-                );
-
-                await this.finalizeChat();
-            } catch (error) {
-                console.error("Submit subjects error:", error);
-                this.pushBot(
-                    "Ada gangguan saat menyimpan. Coba lagi ya!",
-                    null,
-                    false,
-                );
-            }
-        },
-
         lockConversation() {
             if (this._locking) return;
             this._locking = true;
@@ -460,8 +379,106 @@ export function chatbot() {
         },
 
         scrollToBottom() {
-            const area = this.$refs.messageArea;
-            if (area) area.scrollTop = area.scrollHeight;
+            const area = document.querySelector('[x-ref="messageArea"]');
+            if (area) {
+                area.scrollTo({
+                    top: area.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
+        },
+
+        // ========== SUBJECT MODAL ==========
+        showSubjectModal: false,
+        subjectInput: '',
+        selectedSubjects: [],
+        pendingSubject: null,
+        pendingScore: null,
+
+        popularSubjects: [
+            'Matematika', 'Bahasa Inggris', 'Bahasa Indonesia',
+            'Fisika', 'Kimia', 'Biologi', 'Ekonomi', 'Geografi',
+            'Sejarah', 'Sosiologi', 'Teknologi Informasi',
+            'Pemrograman', 'Basis Data', 'Jaringan Komputer',
+            'Desain Grafis', 'Akuntansi', 'Kewirausahaan',
+        ],
+
+        subjectNormalizeMap: {
+            'mtk': 'Matematika', 'math': 'Matematika',
+            'bing': 'Bahasa Inggris', 'english': 'Bahasa Inggris',
+            'bind': 'Bahasa Indonesia',
+            'fis': 'Fisika', 'kim': 'Kimia', 'bio': 'Biologi',
+            'eko': 'Ekonomi', 'geo': 'Geografi', 'sej': 'Sejarah',
+            'sosio': 'Sosiologi',
+            'tik': 'Teknologi Informasi',
+            'asj': 'Administrasi Sistem Jaringan',
+            'tkj': 'Teknik Komputer Jaringan',
+            'rpl': 'Rekayasa Perangkat Lunak',
+            'dkv': 'Desain Komunikasi Visual',
+            'pkn': 'Pendidikan Kewarganegaraan',
+            'sbk': 'Seni Budaya',
+            'pai': 'Pendidikan Agama Islam',
+        },
+
+        normalizeSubject(input) {
+            let cleaned = input.toLowerCase().trim()
+            if (this.subjectNormalizeMap[cleaned]) {
+                return this.subjectNormalizeMap[cleaned]
+            }
+            return cleaned.split(' ')
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ')
+        },
+
+        selectSubject(subject) {
+            this.pendingSubject = subject
+            this.pendingScore = null
+        },
+
+        confirmSubject() {
+            if (!this.pendingSubject || !this.pendingScore) return
+            if (this.pendingScore < 0 || this.pendingScore > 100) return
+
+            const name = this.normalizeSubject(this.pendingSubject)
+            if (!this.selectedSubjects.find(s => s.name === name) && this.selectedSubjects.length < 4) {
+                this.selectedSubjects.push({ name, score: parseInt(this.pendingScore) })
+            }
+            this.pendingSubject = null
+            this.pendingScore = null
+        },
+
+        addCustomSubject() {
+            const input = this.subjectInput.trim()
+            if (!input) return
+
+            // Parse: "Matematika 85" atau "Matematika"
+            const parts = input.match(/^(.*?)\s*(\d+)?$/)
+            const name = parts[1]?.trim()
+            const score = parts[2] ? parseInt(parts[2]) : null
+
+            if (!name) return
+
+            if (score) {
+                // Ada nilai — langsung tambah
+                const normalized = this.normalizeSubject(name)
+                if (!this.selectedSubjects.find(s => s.name === normalized) && this.selectedSubjects.length < 4) {
+                    this.selectedSubjects.push({ name: normalized, score })
+                }
+                this.subjectInput = ''
+            } else {
+                // Nggak ada nilai — pilih mapel dulu
+                this.pendingSubject = this.normalizeSubject(name)
+                this.pendingScore = null
+                this.subjectInput = ''
+            }
+        },
+
+        submitSubjects() {
+            if (this.selectedSubjects.length < 3) return
+
+            sessionStorage.setItem('selected_subjects', JSON.stringify(this.selectedSubjects))
+            this.showSubjectModal = false
+            this.finalizeChat()
         },
     };
 }

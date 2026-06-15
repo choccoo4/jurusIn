@@ -1,9 +1,9 @@
 <header
     x-data="navbar()"
     @scroll.window="onScroll()"
-    :style="scrolled ? 'background:rgba(255,255,255,0.92); box-shadow:0 1px 12px rgba(0,0,0,0.07);' : 'background:rgba(245,244,255,0.7);'"
-    style="position:sticky; top:0; backdrop-filter:blur(12px); border-bottom:1px solid #e0e0f0; transition: background 0.3s, box-shadow 0.3s;">
-
+    style="position:sticky; top:0; z-index:50; backdrop-filter:blur(12px); border-bottom:1px solid #e0e0f0; transition: background 0.3s, box-shadow 0.3s;"
+    :class="scrolled ? 'bg-white shadow-md' : 'bg-purple-50/70'">
+    
     <div style="max-width:1100px; margin:0 auto; padding:0 20px; height:64px; display:flex; align-items:center; justify-content:space-between;">
 
         {{-- Logo --}}

@@ -9,40 +9,40 @@ class RiasecInterpretationService
      */
     private array $narratives = [
         'R' => [
-            'high'   => 'cenderung menyukai pemecahan masalah secara langsung, aktivitas teknis, dan proses kerja yang konkret',
-            'medium' => 'cukup nyaman dengan aktivitas praktis dan teknis',
-            'low'    => 'kurang tertarik pada aktivitas teknis dan pekerjaan yang bersifat praktis',
+            'high' => 'lebih nyaman belajar melalui praktik dan penerapan langsung',
+            'medium' => 'cukup nyaman mencoba dan mengeksplorasi secara langsung',
+            'low' => 'lebih nyaman pada aktivitas yang tidak terlalu berorientasi praktik'
         ],
 
         'I' => [
-            'high'   => 'memiliki ketertarikan terhadap analisis, logika, eksplorasi ide, dan pemecahan masalah secara mendalam',
-            'medium' => 'cukup tertarik pada aktivitas berpikir dan analisis',
-            'low'    => 'kurang menikmati aktivitas analitis dan penelitian mendalam',
+            'high' => 'menikmati memahami suatu hal secara mendalam dan mengeksplorasi berbagai kemungkinan',
+            'medium' => 'cukup tertarik pada aktivitas berpikir dan eksplorasi ide',
+            'low' => 'lebih nyaman pada aktivitas yang tidak terlalu menuntut analisis mendalam'
         ],
 
         'A' => [
-            'high'   => 'menikmati kreativitas, ekspresi diri, dan aktivitas artistik',
-            'medium' => 'cukup nyaman dengan aktivitas kreatif dan ekspresif',
-            'low'    => 'kurang tertarik pada aktivitas artistik dan ekspresi kreatif',
+            'high' => 'menikmati kreativitas dan menemukan cara yang berbeda dalam menyelesaikan sesuatu',
+            'medium' => 'cukup nyaman menggunakan ide dan kreativitas',
+            'low' => 'lebih nyaman pada aktivitas yang memiliki struktur jelas'
         ],
 
         'S' => [
-            'high'   => 'menikmati interaksi sosial, membantu orang lain, dan bekerja secara kolaboratif',
-            'medium' => 'cukup nyaman dengan interaksi sosial dan aktivitas kolaboratif',
-            'low'    => 'kurang tertarik pada aktivitas sosial dan interaksi kelompok',
+            'high' => 'menikmati berinteraksi, bekerja bersama, dan memberi kontribusi kepada orang lain',
+            'medium' => 'cukup nyaman dengan aktivitas kolaboratif',
+            'low' => 'lebih nyaman bekerja secara mandiri'
         ],
 
         'E' => [
-            'high'   => 'nyaman dalam aktivitas kepemimpinan, komunikasi, persuasi, dan pengambilan keputusan',
-            'medium' => 'cukup percaya diri dalam memimpin dan berkomunikasi',
-            'low'    => 'kurang tertarik pada peran kepemimpinan dan persuasi',
+            'high' => 'nyaman mengambil inisiatif, mempengaruhi orang lain, dan mengarahkan jalannya aktivitas',
+            'medium' => 'cukup percaya diri dalam menyampaikan ide',
+            'low' => 'lebih nyaman berperan sebagai pendukung'
         ],
 
         'C' => [
-            'high'   => 'menyukai keteraturan, ketelitian, dan pekerjaan yang terstruktur secara sistematis',
-            'medium' => 'cukup nyaman dengan pekerjaan yang teratur dan sistematis',
-            'low'    => 'kurang tertarik pada pekerjaan yang sangat terstruktur dan administratif',
-        ],
+            'high' => 'menyukai keteraturan dan proses yang terorganisir',
+            'medium' => 'cukup nyaman dengan aktivitas yang terstruktur',
+            'low' => 'lebih nyaman pada lingkungan yang fleksibel'
+        ]
     ];
 
     public function generateProfileText(array $scores): string

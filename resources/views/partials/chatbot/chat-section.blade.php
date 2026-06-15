@@ -7,7 +7,7 @@
         @include('partials.chatbot.chat-header')
 
         {{-- Chat box --}}
-        <div x-data="chatbot()" @subject-submit.window="submitSubjects($event.detail)"
+        <div x-data="chatbot()"
             style="background:#fff; border-radius:24px; border:1px solid #e0e0f0; overflow:hidden; display:flex; flex-direction:column; height:calc(100vh - 200px); min-height:500px;">
 
             {{-- Messages area --}}
@@ -34,7 +34,7 @@
 
             {{-- Suggestion chips - Bungkus luar untuk masking --}}
             <div x-show="showSuggestions" x-transition style="position: relative;padding: 4px 0 12px 0;">
-                
+
                 <p style="font-size:11px; color:#9ca3af; margin:0 24px 10px; line-height:1.5;">
                     💡 Ceritakan secara singkat dan fokus pada pengalaman yang paling menggambarkan diri kamu.
                 </p>
@@ -58,6 +58,7 @@
                     ">
                         <template x-for="chip in currentSuggestions" :key="chip">
                             <button @click="sendChip(chip)"
+                                :disabled="typing || locked || _sending"
                                 style="
                                     flex-shrink: 0;
                                     font-size: 12px;
@@ -84,6 +85,10 @@
             <div style="background:#fff; border-top:1px solid #f0f0f8; padding:8px 12px;">
                 @include('partials.chatbot.chat-input')
             </div>
+
+            {{-- SUBJECT MODAL --}}
+            @include('partials.chatbot.subject-modal')
+
         </div>
 
     </div>
