@@ -10,13 +10,15 @@ class ChatbotValidationService
     private array $questions;
     private array $blacklist;
     private int $minWords;
+    private ChatTextCleanerService $cleaner;
 
-    public function __construct()
+    public function __construct(ChatTextCleanerService $cleaner)
     {
         $config = config('chatbot');
         $this->questions = $config['questions'];
         $this->blacklist = $config['blacklist'];
         $this->minWords = $config['min_words'];
+        $this->cleaner = $cleaner;
     }
 
     /**
@@ -83,9 +85,11 @@ class ChatbotValidationService
      */
     public function generateChatProfileText(array $answers): string
     {
+        $cleanedAnswers = $this->cleaner->cleanAnswers($answers);
+
         return implode("\n", array_map(function ($a) {
             return "- {$a['answer']}";
-        }, $answers));
+        }, $cleanedAnswers));
     }
 
     /**

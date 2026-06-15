@@ -1,5 +1,3 @@
-// resources/js/components/questionnaire.js
-
 export function questionnaire(questions) {
     return {
         questions,
@@ -17,11 +15,21 @@ export function questionnaire(questions) {
         ],
 
         init() {
-            // GUARD: Cek apakah user udah pernah isi kuesioner
-            if (sessionStorage.getItem('quiz_completed')) {
-                window.location.href = '/chat';
-                return;
-            }
+            // Setiap kali halaman kuesioner dibuka (termasuk setelah "Tes Ulang"),
+            // bersihkan data sesi percobaan sebelumnya supaya tidak nyangkut
+            // ke percobaan baru (session_id, jawaban chatbot, mapel, dll).
+            const staleKeys = [
+                "session_id",
+                "quiz_answers",
+                "quiz_questions",
+                "riasec_profile_text",
+                "chat_profile_text",
+                "chat_answers",
+                "input_profile_text",
+                "selected_subjects",
+                "quiz_completed",
+            ];
+            staleKeys.forEach((key) => sessionStorage.removeItem(key));
         },
 
         get currentQuestion() {

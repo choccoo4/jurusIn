@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'quiz.done' => \App\Http\Middleware\CheckQuestionnaire::class,
             'chat.done' => \App\Http\Middleware\ChatbotMiddleware::class,
+            'block.if.recommend' => \App\Http\Middleware\recommendationMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

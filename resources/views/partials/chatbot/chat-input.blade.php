@@ -39,7 +39,7 @@
             {{-- Tombol send dengan spacing jelas --}}
             <button
                 @click="send()"
-                :disabled="input.trim() === '' || typing"
+                :disabled="input.trim() === '' || typing || _sending"
                 style="flex-shrink:0; width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:14px; border:none; transition:all 0.15s ease; disabled:background:#e0e0f0; disabled:cursor:not-allowed; background:#4f46e5; color:white; box-shadow:0 4px 12px rgba(79, 70, 229, 0.3);"
                 onmouseover="if(!this.disabled){this.style.background='#4338ca'; this.style.transform='translateY(-1px)';}"
                 onmouseout="if(!this.disabled){this.style.background='#4f46e5'; this.style.transform='translateY(0)';}"

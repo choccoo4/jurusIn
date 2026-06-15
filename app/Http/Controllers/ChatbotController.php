@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AcademicInterpretationService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use App\Services\ChatbotValidationService;
 use App\Services\ChatbotService;
+use App\Services\AcademicScoreInterpretationService;
 
 class ChatbotController extends Controller
 {
     public function __construct(
         private readonly ChatbotValidationService $validator,
         private readonly ChatbotService $chatbotService,
+        private readonly AcademicInterpretationService $scoreInterpreter,
     ) {}
 
     public function index(): View
@@ -58,7 +61,7 @@ class ChatbotController extends Controller
     {
         $sessionState = session('chatbot_state', []);
         $answers = $sessionState['answers'] ?? [];
-        $subjects = $request->subjects ?? [];  
+        $subjects = $request->subjects ?? [];
 
         if (empty($answers)) {
             return response()->json(['error' => 'No answers found'], 400);
@@ -67,9 +70,7 @@ class ChatbotController extends Controller
         // menggabungkan jawaban chatbot + mapel
         $chatProfileText = $this->validator->generateChatProfileText($answers);
         if (!empty($subjects)) {
-            $subjectText = implode(', ', array_map(function ($s) {
-                return "{$s['name']} (nilai: {$s['score']})";
-            }, $subjects));
+            $subjectText = $this->scoreInterpreter->describeSubjects($subjects);
             $chatProfileText .= "\n\nMata pelajaran favorit: " . $subjectText . '.';
         }
 

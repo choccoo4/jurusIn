@@ -8,6 +8,8 @@ class ResultsController extends Controller
 {
     public function index(): View
     {
+        session(['recommendation_completed' => true]);
+
         return view('pages.results', [
             'recommendations' => $this->recommendations(),
             'insight'         => $this->insight(),

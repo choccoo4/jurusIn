@@ -31,6 +31,21 @@ class QuestionnaireController extends Controller
         ]);
     }
 
+    // reset kuisoner
+    public function resetTest(Request $request)
+    {
+        $request->session()->forget([
+            'quiz_completed',
+            'chatbot_completed',
+            'recommendation_completed',
+            'session_id',
+            'questionnaire_session_id',
+        ]);
+
+        return redirect()->route('questionnaire')
+            ->with('message', 'Silahkan isi kuisoner untuk mendapatkan rekomendasi baru.');
+    }
+
     // ========== API: SAVE ANSWERS ==========
     public function save(Request $request)
     {

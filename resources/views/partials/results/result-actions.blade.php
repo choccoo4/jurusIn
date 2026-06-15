@@ -8,15 +8,18 @@
 
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
 
-        <x-button href="{{ route('questionnaire') }}" variant="outline" size="sm">
-            <x-icon name="refresh" color="#4f46e5" size="15" />
-            Ulangi Tes
-        </x-button>
+       <form action="{{ route('test.reset') }}" method="POST">
+            @csrf
+            <x-button type="submit" variant="outline" size="sm">
+                <x-icon name="refresh" color="#4f46e5" size="15"/>
+                Ulangi Tes
+            </x-button>
 
-        <x-button href="{{ route('quiz.chat') }}" variant="primary" size="sm">
+            <x-button href="{{ route('quiz.chat') }}" variant="primary" size="sm">
             <x-icon name="message" color="#fff" size="15" />
             Tanya Lebih Lanjut
         </x-button>
+       </form>
 
     </div>
 

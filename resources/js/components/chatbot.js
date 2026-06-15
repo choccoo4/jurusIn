@@ -51,32 +51,35 @@ export function chatbot() {
                     "Kepemimpinan & strategi",
                     "Ketelitian & detail",
                 ],
-                5: [ // Q6: Topik penasaran
-                    'Teknologi, AI, dan inovasi digital',
-                    'Sains, penelitian, dan eksperimen',
-                    'Seni, kreativitas, dan desain',
-                    'Bisnis, pemasaran, dan kewirausahaan',
-                    'Kesehatan, medis, dan pelayanan',
-                    'Isu sosial dan kehidupan masyarakat',
-                    'Psikologi dan perilaku manusia',
-                    'Hukum, politik, dan hubungan internasional',
+                5: [
+                    // Q6: Topik penasaran
+                    "Teknologi, AI, dan inovasi digital",
+                    "Sains, penelitian, dan eksperimen",
+                    "Seni, kreativitas, dan desain",
+                    "Bisnis, pemasaran, dan kewirausahaan",
+                    "Kesehatan, medis, dan pelayanan",
+                    "Isu sosial dan kehidupan masyarakat",
+                    "Psikologi dan perilaku manusia",
+                    "Hukum, politik, dan hubungan internasional",
                 ],
-                6: [ // Q7: Pekerjaan impian
-                    'Menjadi pengusaha dan membangun bisnis',
-                    'Menjadi peneliti atau ilmuwan',
-                    'Menjadi dokter atau tenaga kesehatan',
-                    'Menjadi seniman atau kreator',
-                    'Menjadi pengacara atau diplomat',
-                    'Menjadi relawan dan membantu masyarakat',
+                6: [
+                    // Q7: Pekerjaan impian
+                    "Menjadi pengusaha dan membangun bisnis",
+                    "Menjadi peneliti atau ilmuwan",
+                    "Menjadi dokter atau tenaga kesehatan",
+                    "Menjadi seniman atau kreator",
+                    "Menjadi pengacara atau diplomat",
+                    "Menjadi relawan dan membantu masyarakat",
                 ],
-                7: [ // Q8: Aktivitas harian
-                    'Membuat atau menciptakan sesuatu',
-                    'Menganalisis & memecahkan masalah',
-                    'Berdiskusi dan bekerja sama',
-                    'Mengajar dan membimbing orang lain',
-                    'Memimpin dan menyusun strategi',
-                    'Menulis dan mendokumentasikan informasi',
-                    'Meneliti atau mencari informasi baru',
+                7: [
+                    // Q8: Aktivitas harian
+                    "Membuat atau menciptakan sesuatu",
+                    "Menganalisis & memecahkan masalah",
+                    "Berdiskusi dan bekerja sama",
+                    "Mengajar dan membimbing orang lain",
+                    "Memimpin dan menyusun strategi",
+                    "Menulis dan mendokumentasikan informasi",
+                    "Meneliti atau mencari informasi baru",
                 ],
             };
 
@@ -105,17 +108,17 @@ export function chatbot() {
                 id: 5,
                 text: "Menurutmu, kemampuan atau cara kerja apa yang paling sering kamu andalkan saat menyelesaikan sesuatu?",
             },
-            { 
-                id: 6, 
-                text: 'Topik atau bidang apa yang paling sering membuat kamu penasaran dan ingin mempelajarinya lebih jauh?'
+            {
+                id: 6,
+                text: "Topik atau bidang apa yang paling sering membuat kamu penasaran dan ingin mempelajarinya lebih jauh?",
             },
             {
-                id: 7, 
-                text: 'Jika bebas memilih pekerjaan di masa depan tanpa memikirkan gaji atau nilai, pekerjaan seperti apa yang ingin kamu lakukan?'
+                id: 7,
+                text: "Jika bebas memilih pekerjaan di masa depan tanpa memikirkan gaji atau nilai, pekerjaan seperti apa yang ingin kamu lakukan?",
             },
             {
-                id: 8, 
-                text: 'Pekerjaan atau aktivitas seperti apa yang paling menarik untuk kamu bayangkan dilakukan setiap hari?'
+                id: 8,
+                text: "Pekerjaan atau aktivitas seperti apa yang paling menarik untuk kamu bayangkan dilakukan setiap hari?",
             },
         ],
 
@@ -183,18 +186,21 @@ export function chatbot() {
             if (this.locked) return;
             if (withTyping) {
                 this.typing = true;
-                setTimeout(() => {
-                    this.typing = false;
-                    this.messages.push({
-                        sender: "bot",
-                        text,
-                        results,
-                        time: this.now(),
-                    });
-                    requestAnimationFrame(() => {
-                        this.scrollToBottom();
-                    });
-                }, 700 + Math.random() * 400);
+                setTimeout(
+                    () => {
+                        this.typing = false;
+                        this.messages.push({
+                            sender: "bot",
+                            text,
+                            results,
+                            time: this.now(),
+                        });
+                        requestAnimationFrame(() => {
+                            this.scrollToBottom();
+                        });
+                    },
+                    700 + Math.random() * 400,
+                );
             } else {
                 this.messages.push({
                     sender: "bot",
@@ -210,8 +216,10 @@ export function chatbot() {
 
         async send() {
             const text = this.input.trim();
-            if (!text || this.typing || this.locked)
-                return;
+            if (!text || this.typing || this.locked || this._sending) return;
+
+            this._sending = true;
+            this.showSuggestions = false;
 
             const questionId = this.currentQuestion + 1;
             const validation = await this.processAnswer(questionId, text);
@@ -235,6 +243,8 @@ export function chatbot() {
                     () => this.pushBot(validation.message, null, false),
                     400,
                 );
+                this._sending = false;
+                this.showSuggestions = true;
                 return;
             }
 
@@ -249,7 +259,8 @@ export function chatbot() {
                     "chat_answers",
                     JSON.stringify(validation.answers || []),
                 );
-                this.showSubjectModal = true
+                this.showSubjectModal = true;
+                this._sending = false;
                 return;
             }
 
@@ -260,10 +271,15 @@ export function chatbot() {
                     800,
                 );
             }
+
+            this._sending = false;
         },
 
         async sendChip(chip) {
-            if (this.typing || this.locked) return;
+            if (this.typing || this.locked || this._sending) return;
+
+            this._sending = true;
+            this.showSuggestions = false;
 
             const questionId = this.currentQuestion + 1;
             const validation = await this.processAnswer(questionId, chip);
@@ -285,6 +301,8 @@ export function chatbot() {
                 setTimeout(() => {
                     this.pushBot(validation.message, null, false);
                 }, 400);
+                this._sending = false;
+                this.showSuggestions = true;
                 return;
             }
 
@@ -297,7 +315,8 @@ export function chatbot() {
                     "chat_answers",
                     JSON.stringify(validation.answers || []),
                 );
-                this.showSubjectModal = true
+                this.showSubjectModal = true;
+                this._sending = false;
                 return;
             }
 
@@ -308,6 +327,8 @@ export function chatbot() {
                     800,
                 );
             }
+
+            this._sending = false;
         },
 
         async processAnswer(questionId, answer) {
@@ -335,7 +356,9 @@ export function chatbot() {
         async finalizeChat() {
             // Ambil session_id yang benar — disimpan saat questionnaire selesai
             const sessionId = sessionStorage.getItem("session_id") || "";
-            const subjects = JSON.parse(sessionStorage.getItem('selected_subjects') || '[]');
+            const subjects = JSON.parse(
+                sessionStorage.getItem("selected_subjects") || "[]",
+            );
 
             try {
                 const response = await fetch("/chatbot/finalize", {
@@ -422,102 +445,133 @@ export function chatbot() {
             if (area) {
                 area.scrollTo({
                     top: area.scrollHeight,
-                    behavior: 'smooth'
+                    behavior: "smooth",
                 });
             }
         },
 
         // ========== SUBJECT MODAL ==========
         showSubjectModal: false,
-        subjectInput: '',
+        subjectInput: "",
         selectedSubjects: [],
         pendingSubject: null,
         pendingScore: null,
 
         popularSubjects: [
-            'Matematika', 'Bahasa Inggris', 'Bahasa Indonesia',
-            'Fisika', 'Kimia', 'Biologi', 'Ekonomi', 'Geografi',
-            'Sejarah', 'Sosiologi', 'Teknologi Informasi',
-            'Pemrograman', 'Basis Data', 'Jaringan Komputer',
-            'Desain Grafis', 'Akuntansi', 'Kewirausahaan',
+            "Matematika",
+            "Bahasa Inggris",
+            "Bahasa Indonesia",
+            "Fisika",
+            "Kimia",
+            "Biologi",
+            "Ekonomi",
+            "Geografi",
+            "Sejarah",
+            "Sosiologi",
+            "Teknologi Informasi",
+            "Pemrograman",
+            "Basis Data",
+            "Jaringan Komputer",
+            "Desain Grafis",
+            "Akuntansi",
+            "Kewirausahaan",
         ],
 
         subjectNormalizeMap: {
-            'mtk': 'Matematika', 'math': 'Matematika',
-            'bing': 'Bahasa Inggris', 'english': 'Bahasa Inggris',
-            'bind': 'Bahasa Indonesia',
-            'fis': 'Fisika', 'kim': 'Kimia', 'bio': 'Biologi',
-            'eko': 'Ekonomi', 'geo': 'Geografi', 'sej': 'Sejarah',
-            'sosio': 'Sosiologi',
-            'tik': 'Teknologi Informasi',
-            'asj': 'Administrasi Sistem Jaringan',
-            'tkj': 'Teknik Komputer Jaringan',
-            'rpl': 'Rekayasa Perangkat Lunak',
-            'dkv': 'Desain Komunikasi Visual',
-            'pkn': 'Pendidikan Kewarganegaraan',
-            'sbk': 'Seni Budaya',
-            'pai': 'Pendidikan Agama Islam',
+            mtk: "Matematika",
+            math: "Matematika",
+            bing: "Bahasa Inggris",
+            english: "Bahasa Inggris",
+            bind: "Bahasa Indonesia",
+            fis: "Fisika",
+            kim: "Kimia",
+            bio: "Biologi",
+            eko: "Ekonomi",
+            geo: "Geografi",
+            sej: "Sejarah",
+            sosio: "Sosiologi",
+            tik: "Teknologi Informasi",
+            asj: "Administrasi Sistem Jaringan",
+            tkj: "Teknik Komputer Jaringan",
+            rpl: "Rekayasa Perangkat Lunak",
+            dkv: "Desain Komunikasi Visual",
+            pkn: "Pendidikan Kewarganegaraan",
+            sbk: "Seni Budaya",
+            pai: "Pendidikan Agama Islam",
         },
 
         normalizeSubject(input) {
-            let cleaned = input.toLowerCase().trim()
+            let cleaned = input.toLowerCase().trim();
             if (this.subjectNormalizeMap[cleaned]) {
-                return this.subjectNormalizeMap[cleaned]
+                return this.subjectNormalizeMap[cleaned];
             }
-            return cleaned.split(' ')
-                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(' ')
+            return cleaned
+                .split(" ")
+                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(" ");
         },
 
         selectSubject(subject) {
-            this.pendingSubject = subject
-            this.pendingScore = null
+            this.pendingSubject = subject;
+            this.pendingScore = null;
         },
 
         confirmSubject() {
-            if (!this.pendingSubject || !this.pendingScore) return
-            if (this.pendingScore < 0 || this.pendingScore > 100) return
+            if (!this.pendingSubject || !this.pendingScore) return;
+            if (this.pendingScore < 0 || this.pendingScore > 100) return;
 
-            const name = this.normalizeSubject(this.pendingSubject)
-            if (!this.selectedSubjects.find(s => s.name === name) && this.selectedSubjects.length < 4) {
-                this.selectedSubjects.push({ name, score: parseInt(this.pendingScore) })
+            const name = this.normalizeSubject(this.pendingSubject);
+            if (
+                !this.selectedSubjects.find((s) => s.name === name) &&
+                this.selectedSubjects.length < 4
+            ) {
+                this.selectedSubjects.push({
+                    name,
+                    score: parseInt(this.pendingScore),
+                });
             }
-            this.pendingSubject = null
-            this.pendingScore = null
+            this.pendingSubject = null;
+            this.pendingScore = null;
         },
 
         addCustomSubject() {
-            const input = this.subjectInput.trim()
-            if (!input) return
+            const input = this.subjectInput.trim();
+            if (!input) return;
 
             // Parse: "Matematika 85" atau "Matematika"
-            const parts = input.match(/^(.*?)\s*(\d+)?$/)
-            const name = parts[1]?.trim()
-            const score = parts[2] ? parseInt(parts[2]) : null
+            const parts = input.match(/^(.*?)\s*(\d+)?$/);
+            const name = parts[1]?.trim();
+            const score = parts[2] ? parseInt(parts[2]) : null;
 
-            if (!name) return
+            if (!name) return;
 
             if (score) {
                 // Ada nilai — langsung tambah
-                const normalized = this.normalizeSubject(name)
-                if (!this.selectedSubjects.find(s => s.name === normalized) && this.selectedSubjects.length < 4) {
-                    this.selectedSubjects.push({ name: normalized, score })
+                const normalized = this.normalizeSubject(name);
+                if (
+                    !this.selectedSubjects.find((s) => s.name === normalized) &&
+                    this.selectedSubjects.length < 4
+                ) {
+                    this.selectedSubjects.push({ name: normalized, score });
                 }
-                this.subjectInput = ''
+                this.subjectInput = "";
             } else {
                 // Nggak ada nilai — pilih mapel dulu
-                this.pendingSubject = this.normalizeSubject(name)
-                this.pendingScore = null
-                this.subjectInput = ''
+                this.pendingSubject = this.normalizeSubject(name);
+                this.pendingScore = null;
+                this.subjectInput = "";
             }
         },
 
         submitSubjects() {
-            if (this.selectedSubjects.length < 3) return
+            if (this.selectedSubjects.length < 3) return;
 
-            sessionStorage.setItem('selected_subjects', JSON.stringify(this.selectedSubjects))
-            this.showSubjectModal = false
-            this.finalizeChat()
+            sessionStorage.setItem(
+                "selected_subjects",
+                JSON.stringify(this.selectedSubjects),
+            );
+            this.showSubjectModal = false;
+            this.finalizeChat();
         },
     };
 }
