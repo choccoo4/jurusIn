@@ -15,6 +15,12 @@ class ChatbotMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+
+        if (!session('quiz_completed')) {
+            return redirect()->route('questionnaire')
+                ->with('message', 'Silahkan isi kuisoner terlebih dahulu!');
+        }
+
         if (!session('chatbot_completed')) {
             return redirect()->route('quiz.chat')
                 ->with('message', 'Silahkan selesaikan chatbot terlebih dahulu!');
