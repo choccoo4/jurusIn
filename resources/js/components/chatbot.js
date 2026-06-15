@@ -51,6 +51,33 @@ export function chatbot() {
                     "Kepemimpinan & strategi",
                     "Ketelitian & detail",
                 ],
+                5: [ // Q6: Topik penasaran
+                    'Teknologi, AI, dan inovasi digital',
+                    'Sains, penelitian, dan eksperimen',
+                    'Seni, kreativitas, dan desain',
+                    'Bisnis, pemasaran, dan kewirausahaan',
+                    'Kesehatan, medis, dan pelayanan',
+                    'Isu sosial dan kehidupan masyarakat',
+                    'Psikologi dan perilaku manusia',
+                    'Hukum, politik, dan hubungan internasional',
+                ],
+                6: [ // Q7: Pekerjaan impian
+                    'Menjadi pengusaha dan membangun bisnis',
+                    'Menjadi peneliti atau ilmuwan',
+                    'Menjadi dokter atau tenaga kesehatan',
+                    'Menjadi seniman atau kreator',
+                    'Menjadi pengacara atau diplomat',
+                    'Menjadi relawan dan membantu masyarakat',
+                ],
+                7: [ // Q8: Aktivitas harian
+                    'Membuat atau menciptakan sesuatu',
+                    'Menganalisis & memecahkan masalah',
+                    'Berdiskusi dan bekerja sama',
+                    'Mengajar dan membimbing orang lain',
+                    'Memimpin dan menyusun strategi',
+                    'Menulis dan mendokumentasikan informasi',
+                    'Meneliti atau mencari informasi baru',
+                ],
             };
 
             return suggestionMap[this.currentQuestion] || [];
@@ -77,6 +104,18 @@ export function chatbot() {
             {
                 id: 5,
                 text: "Menurutmu, kemampuan atau cara kerja apa yang paling sering kamu andalkan saat menyelesaikan sesuatu?",
+            },
+            { 
+                id: 6, 
+                text: 'Topik atau bidang apa yang paling sering membuat kamu penasaran dan ingin mempelajarinya lebih jauh?'
+            },
+            {
+                id: 7, 
+                text: 'Jika bebas memilih pekerjaan di masa depan tanpa memikirkan gaji atau nilai, pekerjaan seperti apa yang ingin kamu lakukan?'
+            },
+            {
+                id: 8, 
+                text: 'Pekerjaan atau aktivitas seperti apa yang paling menarik untuk kamu bayangkan dilakukan setiap hari?'
             },
         ],
 

@@ -26,7 +26,7 @@ class ChatbotController extends Controller
     public function processAnswer(Request $request)
     {
         $request->validate([
-            'question_id' => 'required|integer|min:1|max:5',
+            'question_id' => 'required|integer|min:1|max:8',
             'answer' => 'required|string',
         ]);
 
