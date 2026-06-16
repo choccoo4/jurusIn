@@ -47,8 +47,9 @@ class ChatbotValidationService
         $answers = $sessionState['answers'] ?? [];
         $answers[] = [
             'question_id' => $questionId,
-            'question' => $question['question'],
-            'answer' => $answer,
+            'label'       => $question['label'] ?? "Pertanyaan {$questionId}",
+            'question'    => $question['question'],
+            'answer'      => $answer,
         ];
 
         $nextQuestionId = $questionId + 1;
@@ -81,14 +82,22 @@ class ChatbotValidationService
     }
 
     /**
-     * Generate combined profile text.
+     * Generate combined profile text dari jawaban chatbot.
+     *
+     * Format output:
+     *   Aktivitas yang disukai: Mendesain atau berkreasi visual.
+     *   Pendekatan menyelesaikan masalah: Berdiskusi dengan teman atau mentor.
+     *   dst.
      */
     public function generateChatProfileText(array $answers): string
     {
         $cleanedAnswers = $this->cleaner->cleanAnswers($answers);
 
         return implode("\n", array_map(function ($a) {
-            return "- {$a['answer']}";
+            $label  = $a['label'] ?? "Pertanyaan {$a['question_id']}";
+            $answer = rtrim($a['answer'], '.') . '.';
+
+            return "{$label}: {$answer}";
         }, $cleanedAnswers));
     }
 

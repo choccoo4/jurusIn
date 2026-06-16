@@ -4,6 +4,7 @@ return [
     'questions' => [
         [
             'id' => 1,
+            'label' => 'Aktivitas yang disukai',
             'question' => 'Aktivitas seperti apa yang membuat kamu merasa sangat menikmati prosesnya sampai lupa waktu?',
             'context' => [
                 'aktivitas',
@@ -35,6 +36,7 @@ return [
         ],
         [
             'id' => 2,
+            'label' => 'Pendekatan menyelesaikan masalah',
             'question' => 'Saat menghadapi suatu masalah, kamu biasanya lebih suka mencoba langsung, menganalisis dulu, berdiskusi, atau mencari cara lain?',
             'context' => [
                 'masalah',
@@ -61,6 +63,7 @@ return [
         ],
         [
             'id' => 3,
+            'label' => 'Lingkungan yang nyaman',
             'question' => 'Lingkungan belajar atau kerja seperti apa yang membuat kamu merasa nyaman dan produktif?',
             'context' => [
                 'lingkungan',
@@ -91,6 +94,7 @@ return [
         ],
         [
             'id' => 4,
+            'label' => 'Bagian perkerjaan yang paling dinikmati',
             'question' => 'Ketika mengerjakan sesuatu, bagian mana yang paling kamu nikmati: membuat, menganalisis, membantu, memimpin, mengatur, atau lainnya?',
             'context' => [
                 'membuat',
@@ -118,6 +122,7 @@ return [
         ],
         [
             'id' => 5,
+            'label' => 'Kemampuan yang paling diandalkan',
             'question' => 'Menurutmu, kemampuan atau cara kerja apa yang paling sering kamu andalkan?',
             'context' => [
                 'kemampuan',
@@ -146,6 +151,7 @@ return [
         ],
         [
             'id' => 6,
+            'label' => 'Topik yang paling membuat penasaran',
             'question' => 'Topik atau bidang apa yang paling sering membuat kamu penasaran dan ingin mempelajarinya lebih jauh?',
             'context' => [
                 'teknologi',
@@ -192,6 +198,7 @@ return [
 
         [
             'id' => 7,
+            'label' => 'Pekerjaan impian',
             'question' => 'Jika bebas memilih pekerjaan di masa depan tanpa memikirkan gaji atau nilai, pekerjaan seperti apa yang ingin kamu lakukan?',
             'context' => [
                 'pekerjaan',
@@ -240,6 +247,7 @@ return [
         ],
         [
             'id' => 8,
+            'label' => 'Aktivitas yang dibayangkan setiap hari.',
             'question' => 'Pekerjaan atau aktivitas seperti apa yang paling menarik untuk kamu bayangkan dilakukan setiap hari?',
             'context' => [
                 'aktivitas',

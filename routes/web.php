@@ -10,8 +10,8 @@ Route::get('/', [LandingController::class, 'index'])->name('home');
 Route::get('/privasi',   fn() => view('pages.privacy'))->name('privacy');
 Route::get('/ketentuan', fn() => view('pages.terms'))->name('terms');
 
-Route::get('/mulai', [QuestionnaireController::class, 'index'])->name('questionnaire');
-Route::post('/questionnaire/save', [QuestionnaireController::class, 'save']);
+Route::get('/mulai', [QuestionnaireController::class, 'index'])->name('questionnaire')->middleware('block.if.recommend');
+Route::post('/questionnaire/save', [QuestionnaireController::class, 'save'])->middleware('block.if.recommend');
 
 Route::middleware('quiz.done')->group(function () {
     Route::get('/chat', [ChatbotController::class, 'index'])->name('quiz.chat');
@@ -22,3 +22,4 @@ Route::middleware('quiz.done')->group(function () {
 });
 
 Route::get('/hasil', [ResultsController::class, 'index'])->name('results')->middleware('chat.done');
+Route::post('/tes-ulang', [QuestionnaireController::class, 'resetTest'])->name('test.reset');
