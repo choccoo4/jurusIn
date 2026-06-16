@@ -36,27 +36,27 @@ export function chatbot() {
                 ],
                 3: [
                     // Q4: Bagian yang dinikmati
-                    "Membuat atau menciptakan sesuatu",
-                    "Menganalisis & mencari solusi",
-                    "Membantu & mendukung orang lain",
-                    "Memimpin & mengatur tim",
-                    "Mengatur & merapikan sistem",
+                    "Menciptakan atau menghasilkan sesuatu",
+                    "Menganalisis informasi dan mencari solusi",
+                    "Membantu serta mendampingi orang lain",
+                    "Mengkoordinasikan dan memimpin tim",
+                    "Menyusun sistem dan prosedur kerja",
                 ],
                 4: [
                     // Q5: Kemampuan diandalkan
-                    "Kemampuan teknis & hands-on",
-                    "Logika & analisis mendalam",
-                    "Kreativitas & inovasi",
-                    "Komunikasi & empati",
-                    "Kepemimpinan & strategi",
-                    "Ketelitian & detail",
+                    "Kemampuan teknis dan praktik langsung",
+                    "Logika dan pemikiran analitis",
+                    "Kreativitas dan menghasilkan ide baru",
+                    "Komunikasi dan memahami orang lain",
+                    "Kepemimpinan dan pengambilan keputusan",
+                    "Keteraturan dan pengelolaan pekerjaan",
                 ],
                 5: [
                     // Q6: Topik penasaran
                     "Teknologi, AI, dan inovasi digital",
                     "Sains, penelitian, dan eksperimen",
                     "Seni, kreativitas, dan desain",
-                    "Bisnis, pemasaran, dan kewirausahaan",
+                    "Bisnis, ekonomi, dan pengembangan usaha",
                     "Kesehatan, medis, dan pelayanan",
                     "Isu sosial dan kehidupan masyarakat",
                     "Psikologi dan perilaku manusia",
@@ -79,7 +79,7 @@ export function chatbot() {
                     "Mengajar dan membimbing orang lain",
                     "Memimpin dan menyusun strategi",
                     "Menulis dan mendokumentasikan informasi",
-                    "Meneliti atau mencari informasi baru",
+                    "Meneliti atau mempelajari hal baru",
                 ],
             };
 
@@ -416,6 +416,7 @@ export function chatbot() {
                 const data = await response.json();
                 if (data.success) {
                     console.log("Saved to DB:", data);
+                    window.location.href = '/hasil';
                     return true;
                 } else {
                     console.error("Save to DB gagal:", data.error);

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class Recommendations extends Model
 {
@@ -23,5 +25,10 @@ class Recommendations extends Model
     public function questionnaireSession(): BelongsTo
     {
         return $this->belongsTo(QuestionnaireSession::class);
+    }
+
+    public function details(): HasMany
+    {
+        return $this->hasMany(RecommendationDetail::class, 'recommendation_id');
     }
 }

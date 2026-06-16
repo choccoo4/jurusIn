@@ -112,7 +112,12 @@ class ChatbotController extends Controller
                 $request->input_profile_text,
             );
 
-            session(['chatbot_completed' => true]);
+            session([
+                'chatbot_completed' => true,
+                'questionnaire_session_id' => $recommendation->questionnaire_session_id,
+                'input_profile_text' => $request->input_profile_text,                    
+                'recommendation_id' => $recommendation->id,                    
+            ]);
 
             return response()->json([
                 'success' => true,

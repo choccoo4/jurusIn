@@ -111,8 +111,11 @@ class QuestionnaireController extends Controller
             }
 
             DB::commit();
-            session(['quiz_completed' => true]);
-
+            session([
+                'quiz_completed' => true,
+                'questionnaire_session_id' => $sessionId,
+                'profile_text' => $profileText,
+            ]);
 
             return response()->json([
                 'success'    => true,

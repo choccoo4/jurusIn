@@ -25,12 +25,12 @@ RIASEC_MAPPING = {
 }
 
 RIASEC_LABELS = {
-    "R": "Realistic/teknis-praktik",
-    "I": "Investigative/analitis-riset",
-    "A": "Artistic/kreatif",
-    "S": "Social/sosial-membantu",
-    "E": "Enterprising/bisnis-leadership",
-    "C": "Conventional/data-terstruktur",
+    "R": "Praktis dan Teknis",
+    "I": "Analitis dan Investigatif",
+    "A": "Kreatif dan Ekspresif",
+    "S": "Kolaboratif dan Interpersonal",
+    "E": "Inisiatif dan Kepemimpinan",
+    "C": "Terstruktur dan Sistematis",
 }
 
 COLUMN_ALIASES = {
@@ -192,17 +192,18 @@ def generate_recommendation_reason(
     if matching_keywords:
         keyword_text = ", ".join(matching_keywords[:4])
         return (
-            f"Direkomendasikan karena jawaban chatbot cocok pada keyword {keyword_text}, "
-            f"dan pola RIASEC dominan Anda mengarah ke {dominant_text}."
+            f"Jurusan ini cocok karena minat kamu pada {keyword_text} "
+            f"selaras dengan bidang {row['Bidang']}. "
+            f"Profil belajarmu juga menunjukkan kecenderungan {dominant_text}."
         )
     if row['chatbot_similarity'] >= row['riasec_similarity']:
         return (
-            f"Direkomendasikan karena jawaban chatbot Anda paling dekat dengan "
-            f"bidang {row['Bidang']}, dengan dukungan pola RIASEC {dominant_text}."
+            f"Berdasarkan cerita kamu, jurusan ini paling dekat dengan "
+            f"bidang {row['Bidang']}. Gaya belajar kamu juga mendukung ke arah {dominant_text}."
         )
     return (
-        f"Direkomendasikan karena pola RIASEC dominan Anda mengarah ke {dominant_text}, "
-        f"yang relevan dengan bidang {row['Bidang']}."
+        f"Profil RIASEC kamu menunjukkan kecenderungan kuat ke {dominant_text}, "
+        f"yang sangat relevan dengan bidang {row['Bidang']}."
     )
 
 

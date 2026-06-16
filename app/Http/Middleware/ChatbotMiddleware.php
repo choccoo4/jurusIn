@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class ChatbotMiddleware
 {
@@ -15,6 +16,10 @@ class ChatbotMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        Log::info('ChatbotMiddleware CHECK', [
+            'quiz_completed' => session('quiz_completed'),
+            'chatbot_completed' => session('chatbot_completed'),
+        ]);
 
         if (!session('quiz_completed')) {
             return redirect()->route('questionnaire')

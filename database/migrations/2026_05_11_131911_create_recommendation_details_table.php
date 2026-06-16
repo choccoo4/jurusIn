@@ -17,6 +17,7 @@ return new class extends Migration
             $table->float('riasec_match_score')->nullable();
             $table->integer('rank');
             $table->text('reasoning')->nullable();
+            $table->string('matched_keywords')->nullable();
 
             $table->foreignId('recommendation_id')->constrained('recommendations')->cascadeOnDelete();
             $table->foreignId('major_id')->constrained('majors')->cascadeOnDelete();
