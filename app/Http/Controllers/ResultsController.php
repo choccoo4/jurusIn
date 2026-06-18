@@ -17,7 +17,7 @@ class ResultsController extends Controller
 
     public function __construct()
     {
-        $this->fastapiUrl = env('FASTAPI_URL', 'http://localhost:8001');
+        $this->fastapiUrl = env('FASTAPI_URL', 'http://l127.0.0.1:8001');
     }
 
     public function index()

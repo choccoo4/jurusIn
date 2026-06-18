@@ -98,7 +98,6 @@ Pastikan perangkat telah terinstall:
 
 ```bash
 git clone https://github.com/choccoo4/jurusIn
-cd jurusIn-v2
 ```
 
 ---
@@ -152,7 +151,7 @@ php artisan db:seed --class=MajorSeeder
 Masuk ke folder FastAPI:
 
 ```bash
-cd jurusin-fastapi
+cd api_service
 ```
 
 Buat virtual environment:
@@ -211,9 +210,13 @@ FASTAPI_URL=http://127.0.0.1:8001
 ### FastAPI (.env)
 
 ```env
+DATASET_PATH=data/Dataset.csv
+EMBEDDINGS_PATH=data/dataset_embeddings.npy
+MODEL_PATH=paraphrase-multilingual-MiniLM-L12-v2
+CHATBOT_WEIGHT=0.70
+RIASEC_WEIGHT=0.30
 HOST=0.0.0.0
 PORT=8001
-MODEL_NAME=paraphrase-multilingual-MiniLM-L12-v2
 ```
 
 ---
@@ -223,7 +226,7 @@ MODEL_NAME=paraphrase-multilingual-MiniLM-L12-v2
 ## 1. Jalankan Laravel
 
 ```bash
-php artisan serve --port=8000
+php artisan serve
 ```
 
 Laravel akan berjalan di:
@@ -237,7 +240,7 @@ http://127.0.0.1:8000
 ## 2. Jalankan FastAPI
 
 ```bash
-uvicorn app:app --host 127.0.0.1 --port 8001 --reload
+uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload
 ```
 
 FastAPI akan berjalan di:
