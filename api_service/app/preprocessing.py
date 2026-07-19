@@ -60,11 +60,11 @@ def normalize_text(text: str) -> str:
 def preprocess_for_tfidf(text: str) -> str:
     """Pipeline agresif khusus untuk TF-IDF."""
     text = str(text)
-    text = case_folding(text)
-    text = cleaning_text(text)
-    text = remove_special_characters(text)
-    text = remove_whitespace(text)
-    text = normalize_text(text)
+    text = case_folding(text) #lowercase
+    text = cleaning_text(text) #hapus url dan angka
+    text = remove_special_characters(text) #hapus tanda baca
+    text = remove_whitespace(text) #rapikan spasi
+    text = normalize_text(text) #Normalisasi singkatan
     return text
 
 

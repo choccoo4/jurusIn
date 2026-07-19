@@ -103,9 +103,9 @@ class ResultsController extends Controller
 
             // 2. Kirim request rekomendasi
             $response = Http::timeout(30)->post($this->fastapiUrl . '/api/recommend', [
-                'riasec_scores' => $riasecScores,
-                'chatbot_answers' => $inputProfileText,
-                'top_k' => $topK,
+                'riasec_scores' => $riasecScores, // Skor RIASEC dari kuesioner
+                'chatbot_answers' => $inputProfileText, // Gabungan RIASEC + Chatbot + Mapel
+                'top_k' => $topK, // Jumlah rekomendasi
             ]);
 
             if ($response->successful()) {

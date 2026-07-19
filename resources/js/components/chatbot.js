@@ -387,6 +387,9 @@ export function chatbot() {
                     );
                     if (saved) {
                         this.lockConversation();
+                        setTimeout(() => {
+                            window.location.href = '/hasil';
+                        }, 1500);
                     }
                 } else {
                     console.error("Finalize gagal:", data);
